@@ -1,15 +1,19 @@
 import { createRouter, createWebHistory } from "vue-router"
 
 import NotFoundView from "@/components/common/NotFoundView"
-import ClientMainView from "@/components/client/ClientMainView.vue"
-import AdminMainView from "@/components/admin/AdminMainView.vue"
-import LoginView from "@/components/auth/LoginView.vue"
-import RegistrationView from "@/components/auth/RegistrationView.vue"
+import { ClientMainView } from "@/components/client"
+import {
+  AdminMainView,
+  AdminUsersView,
+  AdminServiceRequestsView,
+} from "@/components/admin"
+import { LoginView, RegistrationView } from "@/components/auth"
 
 import store from "@/store"
 
 const routes = [
   { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFoundView },
+  { path: "", name: "root", redirect: "/client" },
   {
     path: "/login",
     name: "login",
@@ -33,33 +37,18 @@ const routes = [
     name: "admin",
     component: AdminMainView,
     meta: { requiresAuth: true, requiresStaff: true },
-    // children: [
-    //   {
-    //     path: "",
-    //     name: "admin-main",
-    //     component: Main,
-    //   },
-    //   {
-    //     path: "users",
-    //     name: "admin-users",
-    //     component: UsersList,
-    //   },
-    //   {
-    //     path: "docs",
-    //     name: "admin-docs",
-    //     component: DocsList,
-    //   },
-    //   {
-    //     path: "subdivisions",
-    //     name: "admin-subdivisions",
-    //     component: SubdivisionsList,
-    //   },
-    //   {
-    //     path: "categories",
-    //     name: "admin-categories",
-    //     component: CategoriesList,
-    //   },
-    // ],
+    children: [
+      {
+        path: "users",
+        name: "admin-users",
+        component: AdminUsersView,
+      },
+      {
+        path: "service-requests",
+        name: "admin-requests",
+        component: AdminServiceRequestsView,
+      },
+    ],
   },
 ]
 
