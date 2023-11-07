@@ -23,17 +23,6 @@
           <div class="modal-body">
             <div class="container-fluid">
               <div class="row">
-                <!--                <div class="col-12">-->
-                <!--                  <div class="mb-3">-->
-                <!--                    <label class="form-label">Аватар</label>-->
-                <!--                    <input-->
-                <!--                      type="file"-->
-                <!--                      ref="file"-->
-                <!--                      name="avatar"-->
-                <!--                      class="form-control"-->
-                <!--                    />-->
-                <!--                  </div>-->
-                <!--                </div>-->
                 <div class="col-12">
                   <div class="mb-3">
                     <label class="form-label">Фамилия</label>
@@ -229,13 +218,23 @@
         >
           <div class="card-body">
             <h5 class="card-title">
-              Заявка от {{ request.date_time_created }}
+              Заявка от
+              {{ getFormattedDateComponent(request.date_time_created) }}
+              {{ getFormattedTimeComponent(request.date_time_created) }}
             </h5>
-            <h5 class="card-title">Статус {{ request.get_request_status }}</h5>
-            <p class="card-text">
-              {{ request.request_description }}
+            <h5
+              class="card-title"
+              :style="{
+                backgroundColor: request.get_request_status_color,
+                display: 'inline',
+              }"
+            >
+              Статус {{ request.get_request_status_text }}
+            </h5>
+            <p class="card-text mt-3">
+              Текст заявки - {{ request.request_description }}
             </p>
-            <a href="#" class="btn btn-primary">Перейти к обсуждению</a>
+            <a href="#" class="link-primary">Перейти к обсуждению</a>
           </div>
         </div>
         <nav>
@@ -277,7 +276,7 @@ import Spinner from "@/components/common/Spinner.vue"
 import { locationAPI } from "@/api/admin/locationAPI"
 import { serviceRequestAPI } from "@/api/client/serviceRequestAPI"
 import TopNavView from "@/components/common/TopNavView.vue"
-
+import { getFormattedDate, getFormattedTime } from "@/utils"
 export default {
   name: "ClientMainView",
   components: { TopNavView, Spinner },
@@ -357,13 +356,6 @@ export default {
         this.isLoading = false
       }
     },
-    updateCurrentUserData(e) {
-      const fieldName = e.target.name
-      this.$store.commit("auth/setUserData", {
-        ...this.userData,
-        [fieldName]: e.target.value,
-      })
-    },
     async updateProfileHandler(e) {
       e.preventDefault()
       e.stopPropagation()
@@ -371,6 +363,19 @@ export default {
         this.$refs.updateProfileModalCloseButton.click()
         this.$router.replace({ name: "client-main" })
       })
+    },
+    updateCurrentUserData(e) {
+      const fieldName = e.target.name
+      this.$store.commit("auth/setUserData", {
+        ...this.userData,
+        [fieldName]: e.target.value,
+      })
+    },
+    getFormattedDateComponent(dateTime) {
+      return getFormattedDate(dateTime)
+    },
+    getFormattedTimeComponent(dateTime) {
+      return getFormattedTime(dateTime)
     },
   },
   computed: {

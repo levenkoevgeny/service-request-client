@@ -42,17 +42,6 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <button
-                type="button"
-                class="btn btn-link nav-link"
-                data-bs-toggle="modal"
-                data-bs-target="#personalDataModal"
-                ref="updateProfileModalShowButton"
-              >
-                Профиль пользователя
-              </button>
-            </li>
-            <li class="nav-item">
               <a class="nav-link" @click="logOut" style="cursor: pointer"
                 >Выход из системы</a
               >
@@ -68,7 +57,7 @@
 import { mapGetters } from "vuex"
 
 export default {
-  name: "TopNavView",
+  name: "TopNavViewAdmin",
   data() {
     return {
       BACKEND_PROTOCOL: process.env.VUE_APP_BACKEND_PROTOCOL,

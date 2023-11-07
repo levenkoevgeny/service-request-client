@@ -8,16 +8,17 @@
       <h3>Пользователи</h3>
     </div>
     <div>
-      <button
-        style="height: 40px; width: 200px"
-        type="button"
-        class="btn btn-primary ms-2"
-        data-bs-toggle="modal"
-        data-bs-target="#newServiceRequestModal"
-      >
-        <!--      <font-awesome-icon icon="fa-solid fa-plus" />-->
-        Добавить
-      </button>
+      <!--      <button-->
+      <!--        style="height: 40px; width: 200px"-->
+      <!--        type="button"-->
+      <!--        class="btn btn-primary ms-2"-->
+      <!--        data-bs-toggle="modal"-->
+      <!--        data-bs-target="#newServiceRequestModal"-->
+      <!--        disabled-->
+      <!--      >-->
+      <!--        &lt;!&ndash;      <font-awesome-icon icon="fa-solid fa-plus" />&ndash;&gt;-->
+      <!--        Добавить-->
+      <!--      </button>-->
     </div>
 
     <div
@@ -29,31 +30,41 @@
     </div>
 
     <div v-else>
-      <table class="table mt-4">
-        <thead>
+      <table class="table table-hover table-sm mt-4">
+        <thead class="table-primary">
           <tr>
-            <th scope="col">№ п.п.</th>
-            <th scope="col">Username</th>
-            <th scope="col">Lastname</th>
-            <th scope="col">Firstname</th>
-            <th scope="col">Is active</th>
-            <th scope="col">Is superuser</th>
-            <th scope="col">Date joined</th>
-            <th scope="col">Last login</th>
-            <th scope="col"></th>
+            <th scope="col" class="text-center">№ п.п.</th>
+            <th scope="col" class="text-center">Username</th>
+            <th scope="col" class="text-center">Lastname</th>
+            <th scope="col" class="text-center">Firstname</th>
+            <th scope="col" class="text-center">Phone number</th>
+            <th scope="col" class="text-center">Is active</th>
+            <th scope="col" class="text-center">Is superuser</th>
+            <th scope="col" class="text-center">Date joined</th>
+            <th scope="col" class="text-center">Last login</th>
+            <th scope="col" class="text-center"></th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="user in sortedUsersList" :key="user.id">
-            <td></td>
-            <td>{{ user.username }}</td>
-            <td>{{ user.last_name }}</td>
-            <td>{{ user.first_name }}</td>
-            <td>{{ user.is_active }}</td>
-            <td>{{ user.is_superuser }}</td>
-            <td>{{ user.date_joined }}</td>
-            <td>{{ user.last_login }}</td>
-            <td>
+          <tr v-for="(user, index) in sortedUsersList" :key="user.id">
+            <td class="text-center">
+              {{ index + 1 }}
+            </td>
+            <td class="text-center">{{ user.username }}</td>
+            <td class="text-center">{{ user.last_name }}</td>
+            <td class="text-center">{{ user.first_name }}</td>
+            <td class="text-center">{{ user.phone_number }}</td>
+            <td class="text-center">{{ user.is_active }}</td>
+            <td class="text-center">{{ user.is_superuser }}</td>
+            <td class="text-center">
+              {{ getFormattedDateComponent(user.date_joined) }} <br />
+              {{ getFormattedTimeComponent(user.date_joined) }}
+            </td>
+            <td class="text-center">
+              {{ getFormattedDateComponent(user.last_login) }}<br />
+              {{ getFormattedTimeComponent(user.last_login) }}
+            </td>
+            <td class="text-center">
               <button type="button" class="btn btn-secondary">
                 Сменить пароль
               </button>
@@ -88,9 +99,12 @@ import { mapGetters } from "vuex"
 import debounce from "lodash.debounce"
 import Spinner from "@/components/common/Spinner.vue"
 import { usersAPI } from "@/api/admin/usersAPI"
+import { getFormattedDate, getFormattedTime } from "@/utils"
+import TopNavView from "@/components/common/TopNavView.vue"
 
 export default {
   name: "AdminUsersView",
+  components: { TopNavView },
   data() {
     return {
       usersList: { results: [] },
@@ -134,6 +148,12 @@ export default {
       } finally {
         this.isLoading = false
       }
+    },
+    getFormattedDateComponent(dateTime) {
+      return getFormattedDate(dateTime)
+    },
+    getFormattedTimeComponent(dateTime) {
+      return getFormattedTime(dateTime)
     },
   },
   async created() {

@@ -1,4 +1,5 @@
 <template>
+  <TopNavViewAdmin />
   <div class="container-fluid">
     <div class="d-flex">
       <div style="width: 300px" class="mt-3">
@@ -46,10 +47,11 @@ import { mapGetters } from "vuex"
 import debounce from "lodash.debounce"
 import Spinner from "@/components/common/Spinner.vue"
 import { locationAPI } from "@/api/admin/locationAPI"
+import TopNavViewAdmin from "@/components/common/TopNavViewAdmin.vue"
 
 export default {
   name: "AdminMainView",
-  components: { Spinner },
+  components: { TopNavViewAdmin, Spinner },
   data() {
     return {
       locationList: { results: [] },
