@@ -55,8 +55,10 @@ const actions = {
   async actionRegistration({ commit }, payload) {
     let { username, password } = payload
     try {
-      await authApi.registration(username, password)
-      await router.replace({ name: "login" })
+      const response = await authApi.registration(username, password)
+      if (response.status === 201) {
+        await router.replace({ name: "login" })
+      } else throw new Error("Registration error")
     } catch (error) {
       commit("setIsRegistrationError", true)
     }
@@ -93,9 +95,17 @@ const actions = {
     commit("setLoggedIn", false)
   },
 
-  async updateUserData({ state, commit }, payload) {
-    // добавить код
-    commit("setUserData", { ...payload })
+  async updateUserData({ state }) {
+    try {
+      const response = await authApi.updateUserData(state.token, {
+        ...state.user,
+      })
+      if (response.status !== 200) {
+        throw new Error("User update error")
+      }
+    } catch (error) {
+      throw new Error(error)
+    }
   },
 }
 

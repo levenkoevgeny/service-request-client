@@ -37,6 +37,7 @@ const routes = [
     name: "admin",
     component: AdminMainView,
     meta: { requiresAuth: true, requiresStaff: true },
+    redirect: "/admin/users",
     children: [
       {
         path: "users",

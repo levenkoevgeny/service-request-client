@@ -1,5 +1,5 @@
 import axios from "axios"
-import { authHeaders } from "@/api/authAPI"
+import { authHeaders } from "@/api/auth/authAPI"
 
 let base_url = "users"
 

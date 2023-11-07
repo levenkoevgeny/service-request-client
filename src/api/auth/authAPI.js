@@ -39,7 +39,7 @@ export const authApi = {
     params.append("username", username)
     params.append("password", password)
     return axios.post(
-      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/user-registration/`,
+      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/users/user-registration/`,
       params,
     )
   },
@@ -51,8 +51,17 @@ export const authApi = {
   },
   async getUserNames(username) {
     return axios.get(
-      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/user-registration/?username=${username}`,
+      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/usernames/?username=${username}`,
     )
   },
-  async updateUserData(token, userData) {},
+  async updateUserData(token, userData) {
+    console.log(userData)
+    let { last_name, first_name, phone_number } = userData
+
+    return axios.patch(
+      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/users/${userData.id}/`,
+      { last_name, first_name, phone_number },
+      authHeaders(token),
+    )
+  },
 }

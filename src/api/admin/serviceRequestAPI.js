@@ -1,13 +1,23 @@
 import axios from "axios"
-import { authHeaders } from "@/api/authAPI"
+import { authHeaders } from "@/api/auth/authAPI"
 
 let base_url = "service-requests"
 
 export const serviceRequestAPI = {
-  async getItemsList(token, searchForm = {}) {
-    let {} = searchForm
+  async getItemsList(
+    token,
+    searchForm = {
+      request_sender: "",
+      address: "",
+      location: "",
+      request_status: "",
+      executor: "",
+    },
+  ) {
+    let { request_sender, address, location, request_status, executor } =
+      searchForm
     return axios.get(
-      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/${base_url}/`,
+      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/${base_url}/?request_sender=${request_sender}&location=${location}&address__icontains=${address}&request_status=${request_status}&executor=${executor}`,
       authHeaders(token),
     )
   },

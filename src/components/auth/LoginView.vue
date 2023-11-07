@@ -32,6 +32,9 @@
         <button class="w-100 btn btn-lg btn-primary" type="submit">Вход</button>
         <br />
         <br />
+        <a href="/registration">Нет аккаунта?</a>
+        <br />
+        <br />
         <p class="mt-5 mb-3 text-muted">&copy; Designed by Levenko Evgeny</p>
       </form>
     </main>
