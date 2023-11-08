@@ -96,7 +96,7 @@
             rows="4"
             class="form-control"
             v-model="typingMessage"
-            @keydown.enter.prevent="sendMessage"
+            @keydown.enter.exact.prevent="sendMessage"
             autofocus
           />
         </form>
