@@ -234,7 +234,9 @@
             <p class="card-text mt-3">
               Текст заявки - {{ request.request_description }}
             </p>
-            <a href="#" class="link-primary">Перейти к обсуждению</a>
+            <a :href="/client/ + request.id" class="link-primary"
+              >Перейти к обсуждению</a
+            >
           </div>
         </div>
         <nav>

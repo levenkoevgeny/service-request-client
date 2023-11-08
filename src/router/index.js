@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router"
 
 import NotFoundView from "@/components/common/NotFoundView"
-import { ClientMainView } from "@/components/client"
+import { ClientMainView, ServiceRequestChatView } from "@/components/client"
 import {
   AdminMainView,
   AdminUsersView,
@@ -30,6 +30,12 @@ const routes = [
     path: "/client",
     name: "client-main",
     component: ClientMainView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/client/:requestId",
+    name: "service-request-view",
+    component: ServiceRequestChatView,
     meta: { requiresAuth: true },
   },
   {
