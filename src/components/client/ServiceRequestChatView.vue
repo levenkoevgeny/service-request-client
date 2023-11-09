@@ -52,7 +52,7 @@
         >
           <div class="me-5">
             <img
-              :src="getAvatar(message.sender.avatar)"
+              :src="getAvatar(message.sender_data.avatar)"
               alt="No picture"
               class="rounded-circle"
               width="70"
@@ -66,7 +66,9 @@
             "
             class="p-3"
           >
-            <p class="fs-3">{{ message.message_text }}</p>
+            <p class="fs-3">
+              {{ message.message_text }}
+            </p>
           </div>
         </div>
         <div
@@ -77,11 +79,16 @@
             style="border-radius: 15px; background-color: #fbfbfb"
             class="p-3"
           >
-            <p class="fs-3">{{ message.message_text }}</p>
+            <p class="fs-3" v-if="message.isRead">
+              {{ message.message_text }}
+            </p>
+            <p class="fs-3" v-else style="background-color: #0dcaf0">
+              {{ message.message_text }}
+            </p>
           </div>
           <div class="ms-5">
             <img
-              :src="getAvatar(message.sender.avatar)"
+              :src="getAvatar(message.sender_data.avatar)"
               alt="No picture"
               class="rounded-circle"
               width="70"
@@ -111,6 +118,7 @@ import { messagesAPI } from "@/api/admin/messagesAPI"
 import { mapGetters, mapState } from "vuex"
 import TopNavView from "@/components/common/TopNavView.vue"
 import { getFormattedDate, getFormattedTime } from "@/utils"
+import { callWithAsyncErrorHandling } from "vue"
 export default {
   name: "ServiceRequestChatView",
   components: { TopNavView },
@@ -137,19 +145,40 @@ export default {
   async created() {
     const requestId = this.$route.params.requestId
     await this.loadData(requestId)
-    console.log(this.chatMessages)
     this.rws = new ReconnectingWebSocket(
-      `ws://localhost:8000/ws/chat/${requestId}/`,
+      `ws://${this.BACKEND_HOST}:${this.BACKEND_PORT}/ws/chat/${requestId}/`,
     )
 
-    this.rws.addEventListener("open", () => {
-      console.log("ws connect")
-    })
+    this.rws.addEventListener("open", () => {})
 
-    this.rws.addEventListener("message", (e) => {
-      this.chatMessages.results.push(JSON.parse(e.data))
-      console.log(JSON.parse(e.data))
+    this.rws.addEventListener("message", async (e) => {
+      const messageFromWebSocket = JSON.parse(e.data)
+      let thereIsMessage = false
+      let newChatMessages = this.chatMessages.results.map((message) => {
+        if (message.id === messageFromWebSocket.id) {
+          thereIsMessage = true
+          return messageFromWebSocket
+        } else {
+          return message
+        }
+      })
+
+      if (!thereIsMessage) {
+        this.chatMessages.results.push(messageFromWebSocket)
+        if (messageFromWebSocket.sender_data.id !== this.userData.id) {
+          console.log("not you")
+          await messagesAPI.updateItem(this.userToken, {
+            ...messageFromWebSocket,
+            isRead: true,
+          })
+        }
+      } else {
+        this.chatMessages.results = newChatMessages
+      }
     })
+  },
+  unmounted() {
+    this.rws = null
   },
   methods: {
     async loadData(reqId) {
@@ -168,6 +197,15 @@ export default {
           { service_request: reqId, message_text: "", sender: "" },
         )
         this.chatMessages = await responseMessages.data
+
+        this.chatMessages.results.map(async (message) => {
+          if (!message.isRead && message.sender_data.id !== this.userData.id) {
+            await messagesAPI.updateItem(this.userToken, {
+              ...message,
+              isRead: true,
+            })
+          }
+        })
       } catch (error) {
         this.isError = true
       } finally {
@@ -191,7 +229,7 @@ export default {
       return getFormattedTime(dateTime)
     },
     isMessageMine(message) {
-      return message.sender.id === this.userData.id
+      return message.sender_data.id === this.userData.id
     },
     getAvatar(uri) {
       const trimmedURI = uri.slice(uri.indexOf("/media"))

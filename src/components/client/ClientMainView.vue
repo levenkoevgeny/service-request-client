@@ -237,6 +237,9 @@
             <a :href="/client/ + request.id" class="link-primary"
               >Перейти к обсуждению</a
             >
+            <p>
+              Не прочитанных сообщений - {{ request.not_read_messages_count }}
+            </p>
           </div>
         </div>
         <nav>
@@ -273,6 +276,7 @@
 
 <script>
 import { mapGetters, mapState } from "vuex"
+import ReconnectingWebSocket from "reconnecting-websocket"
 import debounce from "lodash.debounce"
 import Spinner from "@/components/common/Spinner.vue"
 import { locationAPI } from "@/api/admin/locationAPI"
@@ -296,15 +300,41 @@ export default {
         address: "",
         request_description: "",
       },
+      rws: null,
+      BACKEND_PROTOCOL: process.env.VUE_APP_BACKEND_PROTOCOL,
+      BACKEND_HOST: process.env.VUE_APP_BACKEND_HOST,
+      BACKEND_PORT: process.env.VUE_APP_BACKEND_PORT,
     }
   },
   async created() {
     await this.loadData()
+    this.rws = new ReconnectingWebSocket(
+      `ws://${this.BACKEND_HOST}:${this.BACKEND_PORT}/ws/requests/${this.userData.id}/`,
+    )
+
+    this.rws.addEventListener("open", () => {})
+
+    this.rws.addEventListener("message", (e) => {
+      const serviceRequestFromWebSocket = JSON.parse(e.data)
+      let newServiceRequestList = this.serviceRequestList.results.map(
+        (serReq) => {
+          if (serReq.id === serviceRequestFromWebSocket.id) {
+            return serviceRequestFromWebSocket
+          } else {
+            return serReq
+          }
+        },
+      )
+      this.serviceRequestList.results = newServiceRequestList
+    })
   },
   mounted() {
     if (!this.userData.phone_number || !this.userData.last_name) {
       this.$refs.updateProfileModalShowButtonHidden.click()
     }
+  },
+  unmounted() {
+    this.rws = null
   },
   methods: {
     async loadData() {
