@@ -6,6 +6,7 @@ import {
   AdminMainView,
   AdminUsersView,
   AdminServiceRequestsView,
+  AdminServiceRequestItemView,
 } from "@/components/admin"
 import { LoginView, RegistrationView } from "@/components/auth"
 
@@ -54,6 +55,11 @@ const routes = [
         path: "service-requests",
         name: "admin-requests",
         component: AdminServiceRequestsView,
+      },
+      {
+        path: "service-requests/:requestId",
+        name: "admin-requests-item",
+        component: AdminServiceRequestItemView,
       },
     ],
   },

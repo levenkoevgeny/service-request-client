@@ -79,7 +79,7 @@
             style="border-radius: 15px; background-color: #fbfbfb"
             class="p-3"
           >
-            <p class="fs-3" v-if="message.isRead">
+            <p class="fs-3" v-if="message.is_read">
               {{ message.message_text }}
             </p>
             <p class="fs-3" v-else style="background-color: #0dcaf0">
@@ -118,7 +118,6 @@ import { messagesAPI } from "@/api/admin/messagesAPI"
 import { mapGetters, mapState } from "vuex"
 import TopNavView from "@/components/common/TopNavView.vue"
 import { getFormattedDate, getFormattedTime } from "@/utils"
-import { callWithAsyncErrorHandling } from "vue"
 export default {
   name: "ServiceRequestChatView",
   components: { TopNavView },
@@ -166,10 +165,9 @@ export default {
       if (!thereIsMessage) {
         this.chatMessages.results.push(messageFromWebSocket)
         if (messageFromWebSocket.sender_data.id !== this.userData.id) {
-          console.log("not you")
           await messagesAPI.updateItem(this.userToken, {
             ...messageFromWebSocket,
-            isRead: true,
+            is_read: true,
           })
         }
       } else {
@@ -199,7 +197,7 @@ export default {
         this.chatMessages = await responseMessages.data
 
         this.chatMessages.results.map(async (message) => {
-          if (!message.isRead && message.sender_data.id !== this.userData.id) {
+          if (!message.is_read && message.sender_data.id !== this.userData.id) {
             await messagesAPI.updateItem(this.userToken, {
               ...message,
               isRead: true,
@@ -212,14 +210,12 @@ export default {
         this.isLoading = false
       }
     },
-    sendMessage() {
-      this.rws.send(
-        JSON.stringify({
-          message: this.typingMessage,
-          sender: this.userData.id,
-          service_request: this.currentServiceRequest.id,
-        }),
-      )
+    async sendMessage() {
+      await messagesAPI.addItem(this.userToken, {
+        message_text: this.typingMessage,
+        sender: this.userData.id,
+        service_request: this.currentServiceRequest.id,
+      })
       this.typingMessage = ""
     },
     getFormattedDateComponent(dateTime) {

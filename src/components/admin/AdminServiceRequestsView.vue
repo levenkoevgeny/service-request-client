@@ -1,146 +1,146 @@
 <template>
-  <div
-    class="modal fade"
-    id="updateServiceRequestModal"
-    tabindex="-1"
-    aria-labelledby="exampleModalLabel2"
-    aria-hidden="true"
-    ref="serviceRequestUpdateModal"
-  >
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        <form @submit.prevent="updateServiceRequestHandler">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">
-              Редактирование заявки
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <div class="container-fluid">
-              <div class="row">
-                <div class="col-12">
-                  <div class="mb-3">
-                    <label class="form-label">Отправитель</label>
-                    <select
-                      v-model="currentServiceRequestForUpdate.request_sender"
-                      class="form-select"
-                      required
-                    >
-                      <option
-                        :value="user.id"
-                        v-for="user in sortedUsersList"
-                        :key="user.id"
-                      >
-                        {{ user.username }}
-                      </option>
-                    </select>
-                  </div>
-                </div>
+  <!--  <div-->
+  <!--    class="modal fade"-->
+  <!--    id="updateServiceRequestModal"-->
+  <!--    tabindex="-1"-->
+  <!--    aria-labelledby="exampleModalLabel2"-->
+  <!--    aria-hidden="true"-->
+  <!--    ref="serviceRequestUpdateModal"-->
+  <!--  >-->
+  <!--    <div class="modal-dialog modal-dialog-centered modal-lg">-->
+  <!--      <div class="modal-content">-->
+  <!--        <form @submit.prevent="updateServiceRequestHandler">-->
+  <!--          <div class="modal-header">-->
+  <!--            <h5 class="modal-title" id="exampleModalLabel">-->
+  <!--              Редактирование заявки-->
+  <!--            </h5>-->
+  <!--            <button-->
+  <!--              type="button"-->
+  <!--              class="btn-close"-->
+  <!--              data-bs-dismiss="modal"-->
+  <!--              aria-label="Close"-->
+  <!--            ></button>-->
+  <!--          </div>-->
+  <!--          <div class="modal-body">-->
+  <!--            <div class="container-fluid">-->
+  <!--              <div class="row">-->
+  <!--                <div class="col-12">-->
+  <!--                  <div class="mb-3">-->
+  <!--                    <label class="form-label">Отправитель</label>-->
+  <!--                    <select-->
+  <!--                      v-model="currentServiceRequestForUpdate.request_sender"-->
+  <!--                      class="form-select"-->
+  <!--                      required-->
+  <!--                    >-->
+  <!--                      <option-->
+  <!--                        :value="user.id"-->
+  <!--                        v-for="user in sortedUsersList"-->
+  <!--                        :key="user.id"-->
+  <!--                      >-->
+  <!--                        {{ user.username }}-->
+  <!--                      </option>-->
+  <!--                    </select>-->
+  <!--                  </div>-->
+  <!--                </div>-->
 
-                <div class="col-12">
-                  <div class="mb-3">
-                    <label class="form-label">Учебный корпус</label>
-                    <select
-                      v-model="currentServiceRequestForUpdate.location"
-                      class="form-select"
-                      required
-                    >
-                      <option
-                        :value="location.id"
-                        v-for="location in sortedLocationsList"
-                        :key="location.id"
-                      >
-                        {{ location.location }}
-                      </option>
-                    </select>
-                  </div>
-                </div>
-                <div class="col-12">
-                  <div class="mb-3">
-                    <label class="form-label">Адрес</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      v-model="currentServiceRequestForUpdate.address"
-                      required
-                    />
-                  </div>
-                </div>
+  <!--                <div class="col-12">-->
+  <!--                  <div class="mb-3">-->
+  <!--                    <label class="form-label">Учебный корпус</label>-->
+  <!--                    <select-->
+  <!--                      v-model="currentServiceRequestForUpdate.location"-->
+  <!--                      class="form-select"-->
+  <!--                      required-->
+  <!--                    >-->
+  <!--                      <option-->
+  <!--                        :value="location.id"-->
+  <!--                        v-for="location in sortedLocationsList"-->
+  <!--                        :key="location.id"-->
+  <!--                      >-->
+  <!--                        {{ location.location }}-->
+  <!--                      </option>-->
+  <!--                    </select>-->
+  <!--                  </div>-->
+  <!--                </div>-->
+  <!--                <div class="col-12">-->
+  <!--                  <div class="mb-3">-->
+  <!--                    <label class="form-label">Адрес</label>-->
+  <!--                    <input-->
+  <!--                      type="text"-->
+  <!--                      class="form-control"-->
+  <!--                      v-model="currentServiceRequestForUpdate.address"-->
+  <!--                      required-->
+  <!--                    />-->
+  <!--                  </div>-->
+  <!--                </div>-->
 
-                <div class="col-12">
-                  <div class="mb-3">
-                    <label class="form-label">Пояснение</label>
-                    <textarea
-                      type="text"
-                      class="form-control"
-                      v-model="
-                        currentServiceRequestForUpdate.request_description
-                      "
-                      rows="4"
-                    />
-                  </div>
-                </div>
+  <!--                <div class="col-12">-->
+  <!--                  <div class="mb-3">-->
+  <!--                    <label class="form-label">Пояснение</label>-->
+  <!--                    <textarea-->
+  <!--                      type="text"-->
+  <!--                      class="form-control"-->
+  <!--                      v-model="-->
+  <!--                        currentServiceRequestForUpdate.request_description-->
+  <!--                      "-->
+  <!--                      rows="4"-->
+  <!--                    />-->
+  <!--                  </div>-->
+  <!--                </div>-->
 
-                <div class="col-12">
-                  <div class="mb-3">
-                    <label class="form-label">Статус</label>
-                    <select
-                      v-model="currentServiceRequestForUpdate.request_status"
-                      class="form-select"
-                      required
-                    >
-                      <option
-                        :value="status.id"
-                        v-for="status in sortedStatusesList"
-                        :key="status.id"
-                      >
-                        {{ status.status }}
-                      </option>
-                    </select>
-                  </div>
-                </div>
+  <!--                <div class="col-12">-->
+  <!--                  <div class="mb-3">-->
+  <!--                    <label class="form-label">Статус</label>-->
+  <!--                    <select-->
+  <!--                      v-model="currentServiceRequestForUpdate.request_status"-->
+  <!--                      class="form-select"-->
+  <!--                      required-->
+  <!--                    >-->
+  <!--                      <option-->
+  <!--                        :value="status.id"-->
+  <!--                        v-for="status in sortedStatusesList"-->
+  <!--                        :key="status.id"-->
+  <!--                      >-->
+  <!--                        {{ status.status }}-->
+  <!--                      </option>-->
+  <!--                    </select>-->
+  <!--                  </div>-->
+  <!--                </div>-->
 
-                <div class="col-12">
-                  <div class="mb-3">
-                    <label class="form-label">Исполнитель</label>
-                    <select
-                      v-model="currentServiceRequestForUpdate.executor"
-                      class="form-select"
-                    >
-                      <option
-                        :value="user.id"
-                        v-for="user in sortedUsersList"
-                        :key="user.id"
-                      >
-                        {{ user.username }}
-                      </option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-              ref="updateServiceRequestCloseButton"
-            >
-              Закрыть
-            </button>
-            <button type="submit" class="btn btn-primary">Сохранить</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
+  <!--                <div class="col-12">-->
+  <!--                  <div class="mb-3">-->
+  <!--                    <label class="form-label">Исполнитель</label>-->
+  <!--                    <select-->
+  <!--                      v-model="currentServiceRequestForUpdate.executor"-->
+  <!--                      class="form-select"-->
+  <!--                    >-->
+  <!--                      <option-->
+  <!--                        :value="user.id"-->
+  <!--                        v-for="user in sortedUsersList"-->
+  <!--                        :key="user.id"-->
+  <!--                      >-->
+  <!--                        {{ user.username }}-->
+  <!--                      </option>-->
+  <!--                    </select>-->
+  <!--                  </div>-->
+  <!--                </div>-->
+  <!--              </div>-->
+  <!--            </div>-->
+  <!--          </div>-->
+  <!--          <div class="modal-footer">-->
+  <!--            <button-->
+  <!--              type="button"-->
+  <!--              class="btn btn-secondary"-->
+  <!--              data-bs-dismiss="modal"-->
+  <!--              ref="updateServiceRequestCloseButton"-->
+  <!--            >-->
+  <!--              Закрыть-->
+  <!--            </button>-->
+  <!--            <button type="submit" class="btn btn-primary">Сохранить</button>-->
+  <!--          </div>-->
+  <!--        </form>-->
+  <!--      </div>-->
+  <!--    </div>-->
+  <!--  </div>-->
 
   <div class="container">
     <div class="d-flex align-items-center mb-3">
@@ -185,7 +185,7 @@
           <tr
             v-for="(request, index) in sortedServiceRequestsList"
             :key="request.id"
-            @click="showModalForUpdateServiceRequest(request.id)"
+            @click="navigateToRout(request.id)"
             style="cursor: pointer"
           >
             <td class="text-center">{{ index + 1 }}</td>
@@ -344,6 +344,12 @@ export default {
       } finally {
         this.isLoading = false
       }
+    },
+    navigateToRout(id) {
+      this.$router.push({
+        name: "admin-requests-item",
+        params: { requestId: id },
+      })
     },
     getFormattedDateComponent(dateTime) {
       return getFormattedDate(dateTime)
