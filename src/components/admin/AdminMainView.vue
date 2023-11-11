@@ -2,40 +2,7 @@
   <TopNavViewAdmin />
   <div class="container-fluid">
     <div class="d-flex">
-      <div style="width: 300px" class="mt-3">
-        <div>
-          <h5>
-            <router-link
-              to="/admin"
-              class="link-secondary"
-              style="text-decoration: none"
-            >
-              Администрирование</router-link
-            >
-          </h5>
-        </div>
-        <ul class="list-group">
-          <li class="list-group-item border-0">
-            <router-link
-              to="/admin/users"
-              class="link-secondary"
-              style="text-decoration: none"
-              ><font-awesome-icon icon="fa-solid fa-user" />&nbsp;
-              Пользователи</router-link
-            >
-          </li>
-          <li class="list-group-item border-0">
-            <router-link
-              to="/admin/service-requests"
-              class="link-secondary"
-              style="text-decoration: none"
-              ><font-awesome-icon icon="fa-solid fa-user" />&nbsp;
-              Заявки</router-link
-            >
-          </li>
-        </ul>
-      </div>
-      <div class="px-3 pt-4" style="width: 100%">
+      <div class="px-3 pt-4">
         <router-view />
       </div>
     </div>

@@ -1,152 +1,67 @@
 <template>
-  <!--  <div-->
-  <!--    class="modal fade"-->
-  <!--    id="updateServiceRequestModal"-->
-  <!--    tabindex="-1"-->
-  <!--    aria-labelledby="exampleModalLabel2"-->
-  <!--    aria-hidden="true"-->
-  <!--    ref="serviceRequestUpdateModal"-->
-  <!--  >-->
-  <!--    <div class="modal-dialog modal-dialog-centered modal-lg">-->
-  <!--      <div class="modal-content">-->
-  <!--        <form @submit.prevent="updateServiceRequestHandler">-->
-  <!--          <div class="modal-header">-->
-  <!--            <h5 class="modal-title" id="exampleModalLabel">-->
-  <!--              Редактирование заявки-->
-  <!--            </h5>-->
-  <!--            <button-->
-  <!--              type="button"-->
-  <!--              class="btn-close"-->
-  <!--              data-bs-dismiss="modal"-->
-  <!--              aria-label="Close"-->
-  <!--            ></button>-->
-  <!--          </div>-->
-  <!--          <div class="modal-body">-->
-  <!--            <div class="container-fluid">-->
-  <!--              <div class="row">-->
-  <!--                <div class="col-12">-->
-  <!--                  <div class="mb-3">-->
-  <!--                    <label class="form-label">Отправитель</label>-->
-  <!--                    <select-->
-  <!--                      v-model="currentServiceRequestForUpdate.request_sender"-->
-  <!--                      class="form-select"-->
-  <!--                      required-->
-  <!--                    >-->
-  <!--                      <option-->
-  <!--                        :value="user.id"-->
-  <!--                        v-for="user in sortedUsersList"-->
-  <!--                        :key="user.id"-->
-  <!--                      >-->
-  <!--                        {{ user.username }}-->
-  <!--                      </option>-->
-  <!--                    </select>-->
-  <!--                  </div>-->
-  <!--                </div>-->
-
-  <!--                <div class="col-12">-->
-  <!--                  <div class="mb-3">-->
-  <!--                    <label class="form-label">Учебный корпус</label>-->
-  <!--                    <select-->
-  <!--                      v-model="currentServiceRequestForUpdate.location"-->
-  <!--                      class="form-select"-->
-  <!--                      required-->
-  <!--                    >-->
-  <!--                      <option-->
-  <!--                        :value="location.id"-->
-  <!--                        v-for="location in sortedLocationsList"-->
-  <!--                        :key="location.id"-->
-  <!--                      >-->
-  <!--                        {{ location.location }}-->
-  <!--                      </option>-->
-  <!--                    </select>-->
-  <!--                  </div>-->
-  <!--                </div>-->
-  <!--                <div class="col-12">-->
-  <!--                  <div class="mb-3">-->
-  <!--                    <label class="form-label">Адрес</label>-->
-  <!--                    <input-->
-  <!--                      type="text"-->
-  <!--                      class="form-control"-->
-  <!--                      v-model="currentServiceRequestForUpdate.address"-->
-  <!--                      required-->
-  <!--                    />-->
-  <!--                  </div>-->
-  <!--                </div>-->
-
-  <!--                <div class="col-12">-->
-  <!--                  <div class="mb-3">-->
-  <!--                    <label class="form-label">Пояснение</label>-->
-  <!--                    <textarea-->
-  <!--                      type="text"-->
-  <!--                      class="form-control"-->
-  <!--                      v-model="-->
-  <!--                        currentServiceRequestForUpdate.request_description-->
-  <!--                      "-->
-  <!--                      rows="4"-->
-  <!--                    />-->
-  <!--                  </div>-->
-  <!--                </div>-->
-
-  <!--                <div class="col-12">-->
-  <!--                  <div class="mb-3">-->
-  <!--                    <label class="form-label">Статус</label>-->
-  <!--                    <select-->
-  <!--                      v-model="currentServiceRequestForUpdate.request_status"-->
-  <!--                      class="form-select"-->
-  <!--                      required-->
-  <!--                    >-->
-  <!--                      <option-->
-  <!--                        :value="status.id"-->
-  <!--                        v-for="status in sortedStatusesList"-->
-  <!--                        :key="status.id"-->
-  <!--                      >-->
-  <!--                        {{ status.status }}-->
-  <!--                      </option>-->
-  <!--                    </select>-->
-  <!--                  </div>-->
-  <!--                </div>-->
-
-  <!--                <div class="col-12">-->
-  <!--                  <div class="mb-3">-->
-  <!--                    <label class="form-label">Исполнитель</label>-->
-  <!--                    <select-->
-  <!--                      v-model="currentServiceRequestForUpdate.executor"-->
-  <!--                      class="form-select"-->
-  <!--                    >-->
-  <!--                      <option-->
-  <!--                        :value="user.id"-->
-  <!--                        v-for="user in sortedUsersList"-->
-  <!--                        :key="user.id"-->
-  <!--                      >-->
-  <!--                        {{ user.username }}-->
-  <!--                      </option>-->
-  <!--                    </select>-->
-  <!--                  </div>-->
-  <!--                </div>-->
-  <!--              </div>-->
-  <!--            </div>-->
-  <!--          </div>-->
-  <!--          <div class="modal-footer">-->
-  <!--            <button-->
-  <!--              type="button"-->
-  <!--              class="btn btn-secondary"-->
-  <!--              data-bs-dismiss="modal"-->
-  <!--              ref="updateServiceRequestCloseButton"-->
-  <!--            >-->
-  <!--              Закрыть-->
-  <!--            </button>-->
-  <!--            <button type="submit" class="btn btn-primary">Сохранить</button>-->
-  <!--          </div>-->
-  <!--        </form>-->
-  <!--      </div>-->
-  <!--    </div>-->
-  <!--  </div>-->
-
-  <div class="container">
+  <div>
     <div class="d-flex align-items-center mb-3">
       <h5><font-awesome-icon icon="fa-solid fa-list" />&nbsp;&nbsp;</h5>
       <h3>Заявки</h3>
     </div>
+    <div class="container">
+      <div class="shadow p-3 mb-5 bg-body rounded">
+        <div class="row">
+          <div class="col-12">
+            <div class="mb-3">
+              <label class="form-label">Учебный корпус</label>
+              <select class="form-select" v-model="requestsSearchForm.location">
+                <option value="">-----</option>
+                <option
+                  :value="location.id"
+                  v-for="location in sortedLocationsList"
+                  :key="location.id"
+                >
+                  {{ location.location }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <div class="mb-3">
+              <label class="form-label">Статус заявки</label>
+              <select
+                class="form-select"
+                v-model="requestsSearchForm.request_status"
+              >
+                <option value="">-----</option>
+                <option
+                  :value="status.id"
+                  v-for="status in sortedStatusesList"
+                  :key="status.id"
+                >
+                  {{ status.status }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-6">
+            <div class="mb-3">
+              <label class="form-label">Исполнитель</label>
+              <select class="form-select" v-model="requestsSearchForm.executor">
+                <option value="">-----</option>
+                <option
+                  :value="user.id"
+                  v-for="user in sortedUsersList"
+                  :key="user.id"
+                >
+                  {{ user.username }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div>
       <!--      <button-->
       <!--        style="height: 40px; width: 200px"-->
@@ -169,7 +84,7 @@
     </div>
 
     <div v-else>
-      <table class="table table-hover table-sm mt-4">
+      <table class="table table-hover table-sm mt-4 bg-body">
         <thead class="table-primary">
           <tr>
             <th scope="col" class="text-center">№ п.п.</th>
@@ -279,7 +194,13 @@ export default {
   methods: {
     async loadData() {
       try {
-        const responseUsers = await usersAPI.getItemsList(this.userToken)
+        const responseUsers = await usersAPI.getItemsList(this.userToken, {
+          username: "",
+          last_name: "",
+          is_active: "",
+          is_superuser: "",
+          can_be_executor: true,
+        })
         this.usersList = await responseUsers.data
 
         const responseLocations = await locationAPI.getItemsList(this.userToken)
@@ -345,6 +266,9 @@ export default {
         this.isLoading = false
       }
     },
+    debouncedSearch: debounce(async function () {
+      await this.loadData()
+    }, 500),
     navigateToRout(id) {
       this.$router.push({
         name: "admin-requests-item",
@@ -380,7 +304,14 @@ export default {
     },
     selectedServiceRequestsCount() {},
   },
-  watch: {},
+  watch: {
+    requestsSearchForm: {
+      handler(newValue, oldValue) {
+        this.debouncedSearch()
+      },
+      deep: true,
+    },
+  },
 }
 </script>
 

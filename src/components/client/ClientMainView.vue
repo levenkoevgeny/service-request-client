@@ -1,85 +1,6 @@
 <template>
   <div
     class="modal fade"
-    id="personalDataModal"
-    tabindex="-1"
-    aria-labelledby="exampleModalLabel2"
-    aria-hidden="true"
-  >
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        <form @submit.prevent="updateProfileHandler">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">
-              Обновление данных профиля
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <div class="container-fluid">
-              <div class="row">
-                <div class="col-12">
-                  <div class="mb-3">
-                    <label class="form-label">Фамилия</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      v-model="currentUser.last_name"
-                      name="last_name"
-                      @input="updateCurrentUserData"
-                    />
-                  </div>
-                </div>
-                <div class="col-12">
-                  <div class="mb-3">
-                    <label class="form-label">Имя</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      v-model="currentUser.first_name"
-                      name="first_name"
-                      @input="updateCurrentUserData"
-                    />
-                  </div>
-                </div>
-                <div class="col-12">
-                  <div class="mb-3">
-                    <label class="form-label">Телефон</label>
-                    <input
-                      class="form-control"
-                      type="text"
-                      v-model="currentUser.phone_number"
-                      name="phone_number"
-                      @input="updateCurrentUserData"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-              ref="updateProfileModalCloseButton"
-            >
-              Закрыть
-            </button>
-            <button type="submit" class="btn btn-primary">Сохранить</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <div
-    class="modal fade"
     id="newServiceRequestModal"
     tabindex="-1"
     aria-labelledby="exampleModalLabel"
@@ -167,35 +88,32 @@
     </div>
   </div>
   <TopNavView />
-  <button
-    type="button"
-    class="btn btn-link nav-link"
-    data-bs-toggle="modal"
-    data-bs-target="#personalDataModal"
-    ref="updateProfileModalShowButtonHidden"
-    style="display: none"
-  >
-    Профиль пользователя
-  </button>
-  <div class="my-5"></div>
+
+  <!--  <button-->
+  <!--    type="button"-->
+  <!--    class="btn btn-link nav-link"-->
+  <!--    data-bs-toggle="modal"-->
+  <!--    data-bs-target="#personalDataModal"-->
+  <!--    ref="updateProfileModalShowButtonHidden"-->
+  <!--    style="display: none"-->
+  <!--  >-->
+  <!--    Профиль пользователя-->
+  <!--  </button>-->
   <div class="container">
-    <div class="alert alert-danger" role="alert" v-if="isError">
-      Ошибка приложения
-    </div>
-    <div class="d-flex align-items-center mb-3">
+    <div class="d-flex align-items-center my-3">
       <h5><font-awesome-icon icon="fa-solid fa-list" />&nbsp;&nbsp;</h5>
       <h3>Ваши заявки</h3>
     </div>
-    <button
-      style="height: 40px; width: 200px"
-      type="button"
-      class="btn btn-primary ms-2"
-      data-bs-toggle="modal"
-      data-bs-target="#newServiceRequestModal"
-    >
-      <!--      <font-awesome-icon icon="fa-solid fa-plus" />-->
-      Создать заявку в ООИТ
-    </button>
+    <!--    <button-->
+    <!--      style="height: 40px; width: 200px"-->
+    <!--      type="button"-->
+    <!--      class="btn btn-primary ms-2"-->
+    <!--      data-bs-toggle="modal"-->
+    <!--      data-bs-target="#newServiceRequestModal"-->
+    <!--    >-->
+    <!--      &lt;!&ndash;      <font-awesome-icon icon="fa-solid fa-plus" />&ndash;&gt;-->
+    <!--      Создать заявку в ООИТ-->
+    <!--    </button>-->
 
     <div
       v-if="isLoading"
@@ -204,72 +122,78 @@
     >
       <Spinner />
     </div>
+
     <div v-else>
+      <div class="my-3"></div>
       <div v-if="!orderedServices.length" class="my-5">
         <h3>У Вас еще пока нет сделанных заявок</h3>
       </div>
-      <div v-else>
-        <div class="mt-5"></div>
+
+      <div v-else class="">
         <div
-          class="card my-3"
-          style="width: 100%"
           v-for="request in orderedServices"
           :key="request.id"
+          :style="{
+            borderLeftColor: request.get_request_status_color,
+          }"
+          class="me-3 mb-3 d-inline-flex serviceCard"
+          @click="navigateToRout(request.id)"
         >
-          <div class="card-body">
-            <h5 class="card-title">
-              Заявка от
+          <div class="p-4" style="width: 100%">
+            <h5>
+              <font-awesome-icon icon="fa-solid fa-calendar-days" />&nbsp;&nbsp;
               {{ getFormattedDateComponent(request.date_time_created) }}
+            </h5>
+            <h5>
+              <font-awesome-icon icon="fa-solid fa-clock" />&nbsp;&nbsp;
               {{ getFormattedTimeComponent(request.date_time_created) }}
             </h5>
-            <h5
-              class="card-title"
-              :style="{
-                backgroundColor: request.get_request_status_color,
-                display: 'inline',
-              }"
-            >
-              Статус {{ request.get_request_status_text }}
-            </h5>
-            <p class="card-text mt-3">
-              Текст заявки - {{ request.request_description }}
+            <p class="m-0 p-0 text-truncate">
+              Текст заявки: {{ request.request_description }}
             </p>
-            <a :href="/client/ + request.id" class="link-primary"
-              >Перейти к обсуждению</a
-            >
-            <p>
-              Не прочитанных сообщений - {{ request.not_read_messages_count }}
+            <p class="m-0 p-0">
+              {{ request.get_request_status_text }}
+            </p>
+            <p></p>
+            <p class="m-0 p-0" v-if="request.not_read_messages_count">
+              <font-awesome-icon icon="fa-solid fa-message" />&nbsp;&nbsp;Не
+              прочитанных сообщений
+              <span class="badge bg-secondary">{{
+                request.not_read_messages_count
+              }}</span>
+            </p>
+            <p class="m-0 p-0" v-else>
+              <font-awesome-icon icon="fa-solid fa-message" />&nbsp;&nbsp;Новых
+              сообщений нет
             </p>
           </div>
         </div>
-        <nav>
-          <ul class="pagination pagination-md">
-            <li
-              class="page-item"
-              :class="{ disabled: !serviceRequestList.previous }"
-            >
-              <button
-                class="page-link"
-                @click="updatePaginator(serviceRequestList.previous)"
-              >
-                <span aria-hidden="true">&laquo;</span>
-              </button>
-            </li>
-            <li class="mx-2"></li>
-            <li
-              class="page-item"
-              :class="{ disabled: !serviceRequestList.next }"
-            >
-              <button
-                class="page-link"
-                @click="updatePaginator(serviceRequestList.next)"
-              >
-                <span aria-hidden="true">&raquo;</span>
-              </button>
-            </li>
-          </ul>
-        </nav>
       </div>
+      <div class="my-3"></div>
+      <nav>
+        <ul class="pagination pagination-md">
+          <li
+            class="page-item"
+            :class="{ disabled: !serviceRequestList.previous }"
+          >
+            <button
+              class="page-link"
+              @click="updatePaginator(serviceRequestList.previous)"
+            >
+              <span aria-hidden="true">&laquo;</span>
+            </button>
+          </li>
+          <li class="mx-2"></li>
+          <li class="page-item" :class="{ disabled: !serviceRequestList.next }">
+            <button
+              class="page-link"
+              @click="updatePaginator(serviceRequestList.next)"
+            >
+              <span aria-hidden="true">&raquo;</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
     </div>
   </div>
 </template>
@@ -388,26 +312,17 @@ export default {
         this.isLoading = false
       }
     },
-    async updateProfileHandler(e) {
-      e.preventDefault()
-      e.stopPropagation()
-      this.$store.dispatch("auth/updateUserData").then(() => {
-        this.$refs.updateProfileModalCloseButton.click()
-        this.$router.replace({ name: "client-main" })
-      })
-    },
-    updateCurrentUserData(e) {
-      const fieldName = e.target.name
-      this.$store.commit("auth/setUserData", {
-        ...this.userData,
-        [fieldName]: e.target.value,
-      })
-    },
     getFormattedDateComponent(dateTime) {
       return getFormattedDate(dateTime)
     },
     getFormattedTimeComponent(dateTime) {
       return getFormattedTime(dateTime)
+    },
+    navigateToRout(id) {
+      this.$router.push({
+        name: "service-request-view",
+        params: { requestId: id },
+      })
     },
   },
   computed: {
@@ -429,4 +344,20 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.serviceCard {
+  width: 25rem;
+  height: 250px;
+  transition: all 0.2s ease-in-out;
+  border: 2px solid #dee2e6;
+  border-radius: 0.6rem;
+  border-left-width: 7px;
+  background-color: #ffffff;
+}
+
+.serviceCard:hover {
+  transform: scale(1.04);
+  background-color: #ffd43b;
+  border: 2px solid #ffd43b;
+}
+</style>
