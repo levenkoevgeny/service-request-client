@@ -56,9 +56,9 @@ const actions = {
     let { username, password } = payload
     try {
       const response = await authApi.registration(username, password)
-      if (response.status === 201) {
-        await router.replace({ name: "login" })
-      } else throw new Error("Registration error")
+      if (response.status !== 201) {
+        throw new Error("Registration error")
+      }
     } catch (error) {
       commit("setIsRegistrationError", true)
     }

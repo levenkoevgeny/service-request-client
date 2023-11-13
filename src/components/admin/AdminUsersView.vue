@@ -1,24 +1,303 @@
 <template>
-  <div class="container">
-    <div class="alert alert-danger" role="alert" v-if="isError">
-      Ошибка приложения
+  <!--add new user modal-->
+  <div
+    class="modal fade"
+    id="newUserModal"
+    tabindex="-1"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div
+          class="alert alert-danger"
+          v-if="v$.newUserForm.$errors.length > 0"
+        >
+          <h5 v-if="v$.newUserForm.username.$error">Логин:</h5>
+          <p v-for="error of v$.newUserForm.username.$errors" :key="error.$uid">
+            {{ error.$message }}
+          </p>
+          <h5 v-if="v$.newUserForm.password.$error">Пароль:</h5>
+          <p v-for="error of v$.newUserForm.password.$errors" :key="error.$uid">
+            {{ error.$message }}
+          </p>
+          <h5 v-if="v$.newUserForm.confirmPassword.$error">Пароль (повтор):</h5>
+          <p
+            v-for="error of v$.newUserForm.confirmPassword.$errors"
+            :key="error.$uid"
+          >
+            {{ error.$message }}
+          </p>
+        </div>
+
+        <form @submit.prevent="addNewUser">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">
+              Новый пользователь
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-12">
+                  <div class="mb-3">
+                    <label class="form-label">Имя пользователя</label>
+                    <input
+                      type="text"
+                      v-model="newUserForm.username"
+                      class="form-control"
+                    />
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="mb-3">
+                    <label class="form-label">Пароль</label>
+                    <input
+                      type="password"
+                      v-model="newUserForm.password"
+                      class="form-control"
+                    />
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="mb-3">
+                    <label class="form-label">Повторите пароль</label>
+                    <input
+                      type="password"
+                      v-model="newUserForm.confirmPassword"
+                      class="form-control"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+              ref="addNewUsertModalCloseButton"
+            >
+              Закрыть
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              :disabled="newUserDataIsValid"
+            >
+              Создать пользователя
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
+  </div>
+
+  <!--add new user modal-->
+
+  <!--update user password-->
+  <div
+    class="modal fade"
+    id="updateUserPasswordModal"
+    tabindex="-1"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div
+          class="alert alert-danger"
+          v-if="v$.updateUserPasswordForm.$errors.length > 0"
+        >
+          <h5 v-if="v$.updateUserPasswordForm.newPassword.$error">Пароль:</h5>
+          <p
+            v-for="error of v$.updateUserPasswordForm.newPassword.$errors"
+            :key="error.$uid"
+          >
+            {{ error.$message }}
+          </p>
+          <h5 v-if="v$.updateUserPasswordForm.confirmNewPassword.$error">
+            Пароль (повтор):
+          </h5>
+          <p
+            v-for="error of v$.updateUserPasswordForm.confirmNewPassword
+              .$errors"
+            :key="error.$uid"
+          >
+            {{ error.$message }}
+          </p>
+        </div>
+        <form @submit.prevent="updatePassword">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">
+              Форма смены пароля
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-12">
+                  <div class="mb-3">
+                    <label class="form-label">Новый пароль</label>
+                    <input
+                      type="password"
+                      v-model="updateUserPasswordForm.newPassword"
+                      class="form-control"
+                    />
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="mb-3">
+                    <label class="form-label">Повторите пароль</label>
+                    <input
+                      type="password"
+                      v-model="updateUserPasswordForm.confirmNewPassword"
+                      class="form-control"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+              ref="updateUserPasswordModalCloseButton"
+            >
+              Закрыть
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              :disabled="updatePasswordFormIsValid"
+            >
+              Обновить пароль
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!--update user password-->
+
+  <div class="">
+    <!--    <div class="alert alert-danger" role="alert" v-if="isError">-->
+    <!--      Ошибка приложения-->
+    <!--    </div>-->
     <div class="d-flex align-items-center mb-3">
       <h5><font-awesome-icon icon="fa-solid fa-list" />&nbsp;&nbsp;</h5>
-      <h3>Пользователи</h3>
+      <h3 class="my-3">Пользователи</h3>
     </div>
-    <div>
-      <!--      <button-->
-      <!--        style="height: 40px; width: 200px"-->
-      <!--        type="button"-->
-      <!--        class="btn btn-primary ms-2"-->
-      <!--        data-bs-toggle="modal"-->
-      <!--        data-bs-target="#newServiceRequestModal"-->
-      <!--        disabled-->
-      <!--      >-->
-      <!--        &lt;!&ndash;      <font-awesome-icon icon="fa-solid fa-plus" />&ndash;&gt;-->
-      <!--        Добавить-->
-      <!--      </button>-->
+
+    <div class="container">
+      <div class="shadow p-3 mb-5 bg-body rounded">
+        <h5 class="my-2 fs-4">Фильтр</h5>
+        <div class="row">
+          <div class="col-6">
+            <div class="mb-3">
+              <label class="form-label">Имя пользователя</label>
+              <input
+                type="text"
+                class="form-control"
+                v-model="usersSearchForm.username"
+              />
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label class="form-label">Фамилия пользователя</label>
+              <input
+                type="text"
+                class="form-control"
+                v-model="usersSearchForm.last_name"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-3">
+            <div class="mb-3">
+              <label class="form-label">Активный</label>
+              <select class="form-select" v-model="usersSearchForm.is_active">
+                <option value="">----</option>
+                <option value="1">Да</option>
+                <option value="0">Нет</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-3">
+            <div class="mb-3">
+              <label class="form-label">Администратор</label>
+              <select class="form-select" v-model="usersSearchForm.is_staff">
+                <option value="">----</option>
+                <option value="1">Да</option>
+                <option value="0">Нет</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-3">
+            <div class="mb-3">
+              <label class="form-label">Может быть исполнителем</label>
+              <select
+                class="form-select"
+                v-model="usersSearchForm.can_be_executor"
+              >
+                <option value="">----</option>
+                <option value="1">Да</option>
+                <option value="0">Нет</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-3">
+            <div class="mb-3">
+              <label class="form-label">Суперпользователь</label>
+              <select
+                class="form-select"
+                v-model="usersSearchForm.is_superuser"
+              >
+                <option value="">----</option>
+                <option value="1">Да</option>
+                <option value="0">Нет</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex align-items-center justify-content-end">
+      <button
+        style="height: 40px; width: 200px"
+        type="button"
+        class="btn btn-danger ms-2"
+        :class="{ 'd-none': !selectedUsersCount }"
+        @click="deleteCheckedUsersHandler"
+      >
+        Удалить - {{ selectedUsersCount }}
+      </button>
+      <button
+        style="height: 40px; width: 200px"
+        type="button"
+        class="btn btn-primary ms-2"
+        data-bs-toggle="modal"
+        data-bs-target="#newUserModal"
+      >
+        Добавить
+      </button>
     </div>
 
     <div
@@ -30,23 +309,36 @@
     </div>
 
     <div v-else>
-      <table class="table table-hover table-sm mt-4">
+      <table class="table table-hover bg-body table-sm mt-4">
         <thead class="table-primary">
           <tr>
+            <th scope="col" class="text-center">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                @click="checkAllHandler($event)"
+              />
+            </th>
             <th scope="col" class="text-center">№ п.п.</th>
-            <th scope="col" class="text-center">Username</th>
-            <th scope="col" class="text-center">Lastname</th>
-            <th scope="col" class="text-center">Firstname</th>
-            <th scope="col" class="text-center">Phone number</th>
-            <th scope="col" class="text-center">Is active</th>
-            <th scope="col" class="text-center">Is superuser</th>
-            <th scope="col" class="text-center">Date joined</th>
-            <th scope="col" class="text-center">Last login</th>
+            <th scope="col" class="text-center">Имя пользователя</th>
+            <th scope="col" class="text-center">Фамилия</th>
+            <th scope="col" class="text-center">Имя</th>
+            <th scope="col" class="text-center">Номер телефона</th>
+            <th scope="col" class="text-center">Активный</th>
+            <th scope="col" class="text-center">Суперпользователь</th>
+            <th scope="col" class="text-center">Дата создания записи</th>
             <th scope="col" class="text-center"></th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(user, index) in sortedUsersList" :key="user.id">
+            <td class="text-center" @click.stop>
+              <input
+                type="checkbox"
+                class="form-check-input"
+                v-model="user.checked_val"
+              />
+            </td>
             <td class="text-center">
               {{ index + 1 }}
             </td>
@@ -61,11 +353,12 @@
               {{ getFormattedTimeComponent(user.date_joined) }}
             </td>
             <td class="text-center">
-              {{ getFormattedDateComponent(user.last_login) }}<br />
-              {{ getFormattedTimeComponent(user.last_login) }}
-            </td>
-            <td class="text-center">
-              <button type="button" class="btn btn-secondary">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-toggle="modal"
+                data-bs-target="#updateUserPasswordModal"
+              >
                 Сменить пароль
               </button>
             </td>
@@ -101,22 +394,28 @@ import Spinner from "@/components/common/Spinner.vue"
 import { usersAPI } from "@/api/admin/usersAPI"
 import { getFormattedDate, getFormattedTime } from "@/utils"
 import TopNavView from "@/components/common/TopNavView.vue"
+import useVuelidate from "@vuelidate/core"
+import { required, helpers, sameAs } from "@vuelidate/validators"
+import { authApi } from "@/api/auth/authAPI"
 
 export default {
   name: "AdminUsersView",
-  components: { TopNavView },
+  components: { TopNavView, Spinner },
   data() {
     return {
       usersList: { results: [] },
       isLoading: true,
       isError: false,
-      newUserForm: { username: "", password: "" },
+      newUserForm: { username: "", password: "", confirmPassword: "" },
+      updateUserPasswordForm: { newPassword: "", confirmNewPassword: "" },
       currentUserForUpdate: null,
       usersSearchForm: {
         username: "",
         last_name: "",
         is_active: "",
         is_superuser: "",
+        can_be_executor: "",
+        is_staff: "",
       },
     }
   },
@@ -134,10 +433,50 @@ export default {
         this.isLoading = false
       }
     },
-    async addNewUser() {},
+    async addNewUser() {
+      if (!this.v$.$invalid) {
+        this.isError = false
+        this.isLoading = true
+        this.$store
+          .dispatch("auth/actionRegistration", { ...this.newUserForm })
+          .then(() => {
+            this.$refs.addNewUsertModalCloseButton.click()
+            this.newUserForm = {
+              username: "",
+              password: "",
+              confirmPassword: "",
+            }
+            this.isLoading = false
+          })
+      }
+    },
     async updateUser(userId) {},
-    async deleteSelectedUsers() {},
+    async deleteCheckedUsersHandler() {
+      this.isLoading = true
+      this.isError = false
+      let requestIds = []
+      this.usersList.results.map((user) => {
+        if (user.checked_val) {
+          requestIds.push(user.id)
+        }
+        return
+      })
+      let requests = requestIds.map((id) =>
+        usersAPI.deleteItem(this.userToken, id),
+      )
+      Promise.all(requests)
+        .then(async () => {
+          await this.loadData()
+        })
+        .catch(() => (this.isError = true))
+        .finally(() => {
+          this.isLoading = false
+        })
+    },
     async updatePassword(userId, newPassword) {},
+    debouncedSearch: debounce(async function () {
+      await this.loadData()
+    }, 100),
     async updatePaginator(url) {
       this.isLoading = true
       try {
@@ -155,21 +494,117 @@ export default {
     getFormattedTimeComponent(dateTime) {
       return getFormattedTime(dateTime)
     },
+    checkAllHandler(e) {
+      if (e.target.checked) {
+        this.usersList.results = this.usersList.results.map((user) => ({
+          ...user,
+          checked_val: true,
+        }))
+      } else {
+        this.usersList.results = this.usersList.results.map((user) => ({
+          ...user,
+          checked_val: false,
+        }))
+      }
+    },
   },
   async created() {
     await this.loadData()
+  },
+  setup() {
+    return { v$: useVuelidate() }
+  },
+  validations() {
+    const passwordRegex = helpers.regex(
+      /(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*]{6,}/,
+    )
+    const loginRegex = helpers.regex(/^[a-zA-Z\d]*$/)
+    const same = sameAs(this.newUserForm.password)
+    const sameUpdate = sameAs(this.updateUserPasswordForm.newPassword)
+    const isUserNameTaken = helpers.withAsync(async (value) => {
+      if (value === "") return true
+      const response = await authApi.getUserNames(value)
+      return response.data.results.length <= 0
+    })
+
+    return {
+      newUserForm: {
+        username: {
+          required: helpers.withMessage("Поле не может быть пустым", required),
+          isUnique: helpers.withMessage(
+            "Пользователь с таким именем уже присутствует в системе",
+            isUserNameTaken,
+          ),
+          loginRegex: helpers.withMessage(
+            "Допускаются только латинские буквы",
+            loginRegex,
+          ),
+          $autoDirty: true,
+        },
+        password: {
+          required: helpers.withMessage("Поле не может быть пустым", required),
+          passwordRegex: helpers.withMessage(
+            "Пароль не удовлетворяет минимальным требованиям безопасности (пароль должен состоять из не менее 6 символов в которых должны присутствовать строчные, прописные буквы, цифры, спецсимволы)",
+            passwordRegex,
+          ),
+          $autoDirty: true,
+        },
+        confirmPassword: {
+          $autoDirty: true,
+          same: helpers.withMessage("Введенные пароли не совпадают", same),
+        },
+      },
+      updateUserPasswordForm: {
+        newPassword: {
+          required: helpers.withMessage("Поле не может быть пустым", required),
+          passwordRegex: helpers.withMessage(
+            "Пароль не удовлетворяет минимальным требованиям безопасности (пароль должен состоять из не менее 6 символов в которых должны присутствовать строчные, прописные буквы, цифры, спецсимволы)",
+            passwordRegex,
+          ),
+          $autoDirty: true,
+        },
+        confirmNewPassword: {
+          $autoDirty: true,
+          same: helpers.withMessage(
+            "Введенные пароли не совпадают",
+            sameUpdate,
+          ),
+        },
+      },
+    }
   },
   computed: {
     ...mapGetters({
       userData: "auth/getUser",
       userToken: "auth/getToken",
     }),
+    newUserDataIsValid: function () {
+      return this.v$.newUserForm.$invalid
+    },
+    updatePasswordFormIsValid: function () {
+      return this.v$.updateUserPasswordForm.$invalid
+    },
     sortedUsersList() {
       return this.usersList.results
     },
-    selectedUsersCount() {},
+    selectedUsersCount() {
+      let counter = 0
+      this.usersList.results.map((user) => {
+        if (user.checked_val) {
+          counter++
+        }
+      })
+      return counter
+    },
   },
-  watch: {},
+  watch: {
+    usersSearchForm: {
+      handler(newValue, oldValue) {
+        this.debouncedSearch()
+      },
+      deep: true,
+    },
+  },
 }
 </script>
 

@@ -16,8 +16,11 @@
           icon="fa-solid fa-triangle-exclamation"
         />&nbsp;&nbsp;{{ currentServiceRequest.request_description }}
       </p>
-      <p class="fs-4 fw-bold">
-        {{ currentServiceRequest.get_request_status_text }}
+      <p class="fs-4">
+        Статус заявки -
+        <span class="fw-bold">{{
+          currentServiceRequest.get_request_status_text
+        }}</span>
       </p>
       <p class="fs-4" v-if="currentServiceRequest.executor">
         <font-awesome-icon
@@ -33,6 +36,7 @@
         borderTopColor: currentServiceRequest.get_request_status_color,
       }"
     >
+      <h5 class="mb-4 fs-4">Обсуждение заявки</h5>
       <div v-for="message in sortedMessages" :key="message.id">
         <div class="message-container mb-3 mx-2">
           <div v-if="isMessageMine(message)">
@@ -141,6 +145,7 @@
               v-model="typingMessage"
               required
               autofocus
+              placeholder="Введите сообщение ..."
             />
           </div>
         </form>

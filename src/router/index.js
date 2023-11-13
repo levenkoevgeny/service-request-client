@@ -47,11 +47,6 @@ const routes = [
     redirect: "/admin/users",
     children: [
       {
-        path: "users",
-        name: "admin-users",
-        component: AdminUsersView,
-      },
-      {
         path: "service-requests",
         name: "admin-requests",
         component: AdminServiceRequestsView,
@@ -60,6 +55,12 @@ const routes = [
         path: "service-requests/:requestId",
         name: "admin-requests-item",
         component: AdminServiceRequestItemView,
+      },
+
+      {
+        path: "users",
+        name: "admin-users",
+        component: AdminUsersView,
       },
     ],
   },

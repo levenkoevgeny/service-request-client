@@ -1,11 +1,7 @@
 <template>
   <TopNavViewAdmin />
   <div class="container-fluid">
-    <div class="d-flex">
-      <div class="px-3 pt-4">
-        <router-view />
-      </div>
-    </div>
+    <router-view />
   </div>
 </template>
 

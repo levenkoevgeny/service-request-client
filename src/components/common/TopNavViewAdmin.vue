@@ -41,13 +41,13 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
+            <li class="nav-item fs-5">
               <a class="nav-link" href="/admin/service-requests">Заявки</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item fs-5">
               <a class="nav-link" href="/admin/users">Пользователи</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item fs-5">
               <a class="nav-link" @click="logOut" style="cursor: pointer"
                 >Выход из системы</a
               >

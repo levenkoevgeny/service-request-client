@@ -96,15 +96,16 @@ import useVuelidate from "@vuelidate/core"
 import { required, helpers, sameAs } from "@vuelidate/validators"
 import { mapGetters } from "vuex"
 import { authApi } from "@/api/auth/authAPI"
+import router from "@/router"
 
 export default {
   name: "RegistrationView",
   data() {
     return {
       auth_data: {
-        username: "levenko",
-        password: "Minsk1986Minsk!",
-        confirmPassword: "Minsk1986Minsk!",
+        username: "",
+        password: "",
+        confirmPassword: "",
       },
     }
   },
@@ -163,9 +164,11 @@ export default {
     }
   },
   methods: {
-    submitHandler(e) {
+    async submitHandler(e) {
       if (!this.v$.$invalid) {
-        this.$store.dispatch("auth/actionRegistration", { ...this.auth_data })
+        this.$store
+          .dispatch("auth/actionRegistration", { ...this.auth_data })
+          .then(() => router.replace({ name: "login" }))
       }
     },
   },

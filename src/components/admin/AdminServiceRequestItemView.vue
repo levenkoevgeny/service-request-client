@@ -3,14 +3,46 @@
     <div class="modal-body">
       <div class="container-fluid">
         <div class="row">
-          <div class="col-12">
+          <div class="col-6">
             <div class="mb-3">
               <label class="form-label">Отправитель</label>
-              <p>{{ currentServiceRequest.request_sender }}</p>
+
+              <select
+                class="form-select"
+                v-model="currentServiceRequest.request_sender"
+                required
+              >
+                <option value="">----</option>
+                <option
+                  v-for="user in sortedUsersList"
+                  :key="user.id"
+                  :value="user.id"
+                >
+                  {{ user.username }}
+                </option>
+              </select>
             </div>
           </div>
-
-          <div class="col-12">
+          <div class="col-6">
+            <div class="mb-3">
+              <label class="form-label">Исполнитель</label>
+              <select
+                class="form-select"
+                v-model="currentServiceRequest.executor"
+                required
+              >
+                <option value="">----</option>
+                <option
+                  v-for="user in sortedExecutorsList"
+                  :key="user.id"
+                  :value="user.id"
+                >
+                  {{ user.username }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="col-6">
             <div class="mb-3">
               <label class="form-label">Учебный корпус</label>
               <select
@@ -24,6 +56,24 @@
                   :key="location.id"
                 >
                   {{ location.location }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-3">
+              <label class="form-label">Статус</label>
+              <select
+                v-model="currentServiceRequest.request_status"
+                class="form-select"
+                required
+              >
+                <option
+                  :value="status.id"
+                  v-for="status in sortedStatusesList"
+                  :key="status.id"
+                >
+                  {{ status.status }}
                 </option>
               </select>
             </div>
@@ -51,43 +101,6 @@
               />
             </div>
           </div>
-
-          <div class="col-6">
-            <div class="mb-3">
-              <label class="form-label">Статус</label>
-              <select
-                v-model="currentServiceRequest.request_status"
-                class="form-select"
-                required
-              >
-                <option
-                  :value="status.id"
-                  v-for="status in sortedStatusesList"
-                  :key="status.id"
-                >
-                  {{ status.status }}
-                </option>
-              </select>
-            </div>
-          </div>
-
-          <div class="col-6">
-            <div class="mb-3">
-              <label class="form-label">Исполнитель</label>
-              <select
-                v-model="currentServiceRequest.executor"
-                class="form-select"
-              >
-                <option
-                  :value="user.id"
-                  v-for="user in sortedUsersList"
-                  :key="user.id"
-                >
-                  {{ user.username }}
-                </option>
-              </select>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -99,13 +112,14 @@
 
 <script>
 import ReconnectingWebSocket from "reconnecting-websocket"
-import { serviceRequestAPI } from "@/api/client/serviceRequestAPI"
+import { serviceRequestAPI } from "@/api/admin/serviceRequestAPI"
 import { messagesAPI } from "@/api/admin/messagesAPI"
 import { mapGetters } from "vuex"
 import { getFormattedDate, getFormattedTime } from "@/utils"
 import { usersAPI } from "@/api/admin/usersAPI"
 import { locationAPI } from "@/api/admin/locationAPI"
 import { statusAPI } from "@/api/admin/statusAPI"
+import debounce from "lodash.debounce"
 
 export default {
   name: "AdminServiceRequestItemView",
@@ -116,6 +130,7 @@ export default {
       locationList: { results: [] },
       usersList: { results: [] },
       statusesList: { results: [] },
+      executorList: { results: [] },
       currentServiceRequest: {
         request_sender: null,
         address: "",
@@ -161,6 +176,15 @@ export default {
         const responseUsers = await usersAPI.getItemsList(this.userToken)
         this.usersList = await responseUsers.data
 
+        const responseExecutors = await usersAPI.getItemsList(this.userToken, {
+          username: "",
+          last_name: "",
+          is_active: "",
+          is_superuser: "",
+          can_be_executor: true,
+        })
+        this.executorList = await responseExecutors.data
+
         const responseLocations = await locationAPI.getItemsList(this.userToken)
         this.locationList = await responseLocations.data
 
@@ -172,6 +196,17 @@ export default {
         this.isLoading = false
       }
     },
+    debouncedUpdate: debounce(async function () {
+      try {
+        await serviceRequestAPI.updateItem(
+          this.userToken,
+          this.currentServiceRequest,
+        )
+      } catch (error) {
+        this.isError = true
+      } finally {
+      }
+    }, 500),
     getFormattedDateComponent(dateTime) {
       return getFormattedDate(dateTime)
     },
@@ -199,6 +234,17 @@ export default {
     },
     sortedStatusesList() {
       return this.statusesList.results
+    },
+    sortedExecutorsList() {
+      return this.executorList.results
+    },
+  },
+  watch: {
+    currentServiceRequest: {
+      handler(newValue, oldValue) {
+        this.debouncedUpdate()
+      },
+      deep: true,
     },
   },
 }

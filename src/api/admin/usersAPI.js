@@ -12,12 +12,19 @@ export const usersAPI = {
       is_active: "",
       is_superuser: "",
       can_be_executor: "",
+      is_staff: "",
     },
   ) {
-    let { username, last_name, is_active, is_superuser, can_be_executor } =
-      searchForm
+    let {
+      username,
+      last_name,
+      is_active,
+      is_superuser,
+      can_be_executor,
+      is_staff,
+    } = searchForm
     return axios.get(
-      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/${base_url}/?username__icontains=${username}&last_name__icontains=${last_name}&is_superuser=${is_superuser}&is_active=${is_active}&can_be_executor=${can_be_executor}`,
+      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/${base_url}/?username__icontains=${username}&last_name__icontains=${last_name}&is_superuser=${is_superuser}&is_active=${is_active}&can_be_executor=${can_be_executor}&is_staff=${is_staff}`,
       authHeaders(token),
     )
   },

@@ -89,16 +89,16 @@
   </div>
   <TopNavView />
 
-  <!--  <button-->
-  <!--    type="button"-->
-  <!--    class="btn btn-link nav-link"-->
-  <!--    data-bs-toggle="modal"-->
-  <!--    data-bs-target="#personalDataModal"-->
-  <!--    ref="updateProfileModalShowButtonHidden"-->
-  <!--    style="display: none"-->
-  <!--  >-->
-  <!--    Профиль пользователя-->
-  <!--  </button>-->
+  <button
+    type="button"
+    class="btn btn-link nav-link"
+    data-bs-toggle="modal"
+    data-bs-target="#personalDataModal"
+    ref="updateProfileModalShowButtonHidden"
+    style="display: none"
+  >
+    Профиль пользователя
+  </button>
   <div class="container">
     <div class="d-flex align-items-center my-3">
       <h5><font-awesome-icon icon="fa-solid fa-list" />&nbsp;&nbsp;</h5>
