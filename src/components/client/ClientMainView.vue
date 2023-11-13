@@ -9,7 +9,7 @@
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <form @submit.prevent="createNewServiceRequest">
-          <div class="modal-header">
+          <div class="modal-header border-bottom border-3">
             <h5 class="modal-title" id="exampleModalLabel">Новая заявка</h5>
             <button
               type="button"
@@ -104,16 +104,17 @@
       <h5><font-awesome-icon icon="fa-solid fa-list" />&nbsp;&nbsp;</h5>
       <h3>Ваши заявки</h3>
     </div>
-    <!--    <button-->
-    <!--      style="height: 40px; width: 200px"-->
-    <!--      type="button"-->
-    <!--      class="btn btn-primary ms-2"-->
-    <!--      data-bs-toggle="modal"-->
-    <!--      data-bs-target="#newServiceRequestModal"-->
-    <!--    >-->
-    <!--      &lt;!&ndash;      <font-awesome-icon icon="fa-solid fa-plus" />&ndash;&gt;-->
-    <!--      Создать заявку в ООИТ-->
-    <!--    </button>-->
+    <div class="d-flex justify-content-start ms-0 ps-0">
+      <button
+        type="button"
+        class="btn btn-primary my-add-button"
+        data-bs-toggle="modal"
+        data-bs-target="#newServiceRequestModal"
+      >
+        <font-awesome-icon icon="fa-solid fa-circle-plus" />&nbsp;&nbsp;Создать
+        заявку в ООИТ
+      </button>
+    </div>
 
     <div
       v-if="isLoading"
@@ -151,7 +152,7 @@
             <p class="m-0 p-0 text-truncate">
               Текст заявки: {{ request.request_description }}
             </p>
-            <p class="m-0 p-0">
+            <p class="m-0 p-0 fw-bold">
               {{ request.get_request_status_text }}
             </p>
             <p></p>
@@ -359,5 +360,12 @@ export default {
   transform: scale(1.04);
   background-color: #ffd43b;
   border: 2px solid #ffd43b;
+}
+
+.my-add-button {
+  transition: all 0.2s ease-in-out;
+}
+.my-add-button:hover {
+  transform: scale(1.04);
 }
 </style>

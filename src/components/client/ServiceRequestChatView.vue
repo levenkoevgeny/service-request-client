@@ -29,128 +29,13 @@
         {{ currentServiceRequest.get_executor_name }}
       </p>
     </div>
-    <div
-      style="background-color: #ffffff"
-      class="p-4 chat-body"
-      :style="{
-        borderTopColor: currentServiceRequest.get_request_status_color,
-      }"
-    >
-      <h5 class="mb-4 fs-4">Обсуждение заявки</h5>
-      <div v-for="message in sortedMessages" :key="message.id">
-        <div class="message-container mb-3 mx-2">
-          <div v-if="isMessageMine(message)">
-            <div
-              class="d-flex flex-row justify-content-start align-items-start"
-            >
-              <div class="d-flex flex-row align-items-center">
-                <div class="me-4">
-                  <img
-                    v-if="message.sender_data.avatar"
-                    :src="getAvatar(message.sender_data.avatar)"
-                    alt="No picture"
-                    class="rounded-circle"
-                    width="70"
-                    height="70"
-                  />
-                  <div
-                    v-else
-                    class="rounded-circle d-flex justify-content-center align-items-center default-avatar"
-                  >
-                    <p class="m-0 p-0 fs-3" style="color: #dee2e6">
-                      {{ getDefaultAvatarText() }}
-                    </p>
-                  </div>
-                </div>
 
-                <div class="d-flex flex-column" style="width: 80%">
-                  <small class="fst-italic py-1">
-                    {{
-                      getFormattedDateComponent(message.date_time_created)
-                    }}&nbsp;
-                    {{ getFormattedTimeComponent(message.date_time_created) }}
-                  </small>
-                  <p
-                    class="message-text p-3 rounded-2"
-                    style="background-color: #e8f1f3"
-                  >
-                    {{ message.message_text }}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div v-else>
-            <div
-              class="d-flex flex-row justify-content-start align-items-start"
-            >
-              <div
-                class="d-flex flex-row align-items-center justify-content-end"
-              >
-                <div class="d-flex flex-column" style="width: 80%">
-                  <small class="fst-italic py-1 ms-auto">
-                    {{
-                      getFormattedDateComponent(message.date_time_created)
-                    }}&nbsp;
-                    {{ getFormattedTimeComponent(message.date_time_created) }}
-                  </small>
-                  <p
-                    class="message-text p-3 rounded-2"
-                    style="background-color: #efefef"
-                  >
-                    {{ message.message_text }}
-                  </p>
-                </div>
-                <div class="ms-4">
-                  <img
-                    v-if="message.sender_data.avatar"
-                    :src="getAvatar(message.sender_data.avatar)"
-                    alt="No picture"
-                    class="rounded-circle"
-                    width="70"
-                    height="70"
-                  />
-
-                  <div
-                    v-else
-                    class="rounded-circle d-flex justify-content-center align-items-center"
-                    style="width: 70px; height: 70px; background-color: #c4bdbd"
-                  >
-                    <p class="m-0 p-0 fs-3" style="color: #dee2e6">
-                      {{ getDefaultAvatarText() }}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="mb-3 mx-2">
-        <form @submit.prevent="sendMessage">
-          <div class="input-group">
-            <button
-              class="btn btn-primary input-group-text fs-4"
-              style="width: 60px"
-              type="submit"
-              :disabled="typingMessageLength()"
-            >
-              <font-awesome-icon icon="fa-solid fa-paper-plane" />
-            </button>
-
-            <textarea
-              rows="2"
-              class="form-control"
-              aria-label="With textarea"
-              v-model="typingMessage"
-              required
-              autofocus
-              placeholder="Введите сообщение ..."
-            />
-          </div>
-        </form>
-      </div>
-    </div>
+    <ChatView
+      :messages-list="sortedMessages"
+      :user-data="userData"
+      :current-service-request="currentServiceRequest"
+      :user-token="userToken"
+    />
   </div>
 </template>
 <script>
@@ -159,10 +44,11 @@ import { serviceRequestAPI } from "@/api/client/serviceRequestAPI"
 import { messagesAPI } from "@/api/admin/messagesAPI"
 import { mapGetters, mapState } from "vuex"
 import TopNavView from "@/components/common/TopNavView.vue"
+import ChatView from "@/components/common/ChatView.vue"
 import { getFormattedDate, getFormattedTime } from "@/utils"
 export default {
   name: "ServiceRequestChatView",
-  components: { TopNavView },
+  components: { TopNavView, ChatView },
   data() {
     return {
       currentServiceRequest: {
@@ -174,7 +60,6 @@ export default {
         executor: null,
       },
       chatMessages: { results: [] },
-      typingMessage: "",
       isError: false,
       isLoading: true,
       rws: null,
@@ -239,10 +124,10 @@ export default {
         this.chatMessages = await responseMessages.data
 
         this.chatMessages.results.map(async (message) => {
-          if (!message.is_read && message.sender_data.id !== this.userData.id) {
+          if (!message.is_read && message.sender !== this.userData.id) {
             await messagesAPI.updateItem(this.userToken, {
               ...message,
-              isRead: true,
+              is_read: true,
             })
           }
         })
@@ -251,14 +136,6 @@ export default {
       } finally {
         this.isLoading = false
       }
-    },
-    async sendMessage() {
-      await messagesAPI.addItem(this.userToken, {
-        message_text: this.typingMessage,
-        sender: this.userData.id,
-        service_request: this.currentServiceRequest.id,
-      })
-      this.typingMessage = ""
     },
     getFormattedDateComponent(dateTime) {
       return getFormattedDate(dateTime)
@@ -275,9 +152,6 @@ export default {
     },
     getDefaultAvatarText() {
       return this.userData.username[0].toUpperCase()
-    },
-    typingMessageLength() {
-      return this.typingMessage.length === 0
     },
   },
   computed: {

@@ -1,12 +1,21 @@
 <template>
-  <div>
-    <div class="modal-body">
+  <div class="container">
+    <div class="shadow p-3 my-5 bg-body rounded">
       <div class="container-fluid">
+        <h5 class="my-3">
+          <font-awesome-icon icon="fa-solid fa-calendar-days" />&nbsp;&nbsp;
+          {{
+            getFormattedDateComponent(currentServiceRequest.date_time_created)
+          }}
+          <font-awesome-icon icon="fa-solid fa-clock" />&nbsp;&nbsp;
+          {{
+            getFormattedTimeComponent(currentServiceRequest.date_time_created)
+          }}
+        </h5>
         <div class="row">
           <div class="col-6">
             <div class="mb-3">
               <label class="form-label">Отправитель</label>
-
               <select
                 class="form-select"
                 v-model="currentServiceRequest.request_sender"
@@ -92,7 +101,7 @@
 
           <div class="col-12">
             <div class="mb-3">
-              <label class="form-label">Пояснение</label>
+              <label class="form-label">Описание неисправности</label>
               <textarea
                 type="text"
                 class="form-control"
@@ -104,10 +113,13 @@
         </div>
       </div>
     </div>
+    <ChatView
+      :messages-list="sortedMessages"
+      :user-data="userData"
+      :current-service-request="currentServiceRequest"
+      :user-token="userToken"
+    />
   </div>
-
-  <!--  {{ currentServiceRequest }}-->
-  <!--  {{ chatMessages }}-->
 </template>
 
 <script>
@@ -120,10 +132,12 @@ import { usersAPI } from "@/api/admin/usersAPI"
 import { locationAPI } from "@/api/admin/locationAPI"
 import { statusAPI } from "@/api/admin/statusAPI"
 import debounce from "lodash.debounce"
+import Spinner from "@/components/common/Spinner.vue"
+import ChatView from "@/components/common/ChatView.vue"
 
 export default {
   name: "AdminServiceRequestItemView",
-  components: {},
+  components: { Spinner, ChatView },
   data() {
     return {
       chatMessages: { results: [] },
@@ -151,6 +165,37 @@ export default {
   async created() {
     const requestId = this.$route.params.requestId
     await this.loadData(requestId)
+
+    this.rws = new ReconnectingWebSocket(
+      `ws://${this.BACKEND_HOST}:${this.BACKEND_PORT}/ws/chat/${requestId}/`,
+    )
+
+    this.rws.addEventListener("open", () => {})
+
+    this.rws.addEventListener("message", async (e) => {
+      const messageFromWebSocket = JSON.parse(e.data)
+      let thereIsMessage = false
+      let newChatMessages = this.chatMessages.results.map((message) => {
+        if (message.id === messageFromWebSocket.id) {
+          thereIsMessage = true
+          return messageFromWebSocket
+        } else {
+          return message
+        }
+      })
+
+      if (!thereIsMessage) {
+        this.chatMessages.results.push(messageFromWebSocket)
+        if (messageFromWebSocket.sender_data.id !== this.userData.id) {
+          await messagesAPI.updateItem(this.userToken, {
+            ...messageFromWebSocket,
+            is_read: true,
+          })
+        }
+      } else {
+        this.chatMessages.results = newChatMessages
+      }
+    })
   },
   mounted() {},
   unmounted() {

@@ -87,7 +87,12 @@
       style="background-color: #ffffff !important"
     >
       <div class="container-fluid">
-        <a class="navbar-brand" href="/" v-if="this.userData.avatar">
+        <a
+          class="navbar-brand"
+          :title="this.userData.username"
+          href="/"
+          v-if="this.userData.avatar"
+        >
           <img
             class="rounded-circle ms-5"
             :src="getAvatar(userData.avatar)"
@@ -96,7 +101,7 @@
             height="70"
           />
         </a>
-        <a class="navbar-brand" href="/" v-else>
+        <a class="navbar-brand" :title="this.userData.username" href="/" v-else>
           <div
             class="rounded-circle d-flex justify-content-center align-items-center default-avatar"
           >

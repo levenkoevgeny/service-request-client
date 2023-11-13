@@ -110,8 +110,11 @@
 
   <div>
     <div class="d-flex align-items-center mb-3">
-      <h5><font-awesome-icon icon="fa-solid fa-list" />&nbsp;&nbsp;</h5>
-      <h3 class="my-3">Заявки</h3>
+      <h3 class="m-4">
+        <font-awesome-icon
+          icon="fa-solid fa-triangle-exclamation"
+        />&nbsp;Заявки
+      </h3>
     </div>
     <div class="container">
       <div class="shadow p-3 mb-5 bg-body rounded">

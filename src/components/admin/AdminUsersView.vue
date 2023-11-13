@@ -200,8 +200,9 @@
     <!--      Ошибка приложения-->
     <!--    </div>-->
     <div class="d-flex align-items-center mb-3">
-      <h5><font-awesome-icon icon="fa-solid fa-list" />&nbsp;&nbsp;</h5>
-      <h3 class="my-3">Пользователи</h3>
+      <h3 class="m-4">
+        <font-awesome-icon icon="fa-solid fa-users" />&nbsp;Пользователи
+      </h3>
     </div>
 
     <div class="container">
@@ -242,7 +243,7 @@
           </div>
           <div class="col-3">
             <div class="mb-3">
-              <label class="form-label">Администратор</label>
+              <label class="form-label">Статус персонала</label>
               <select class="form-select" v-model="usersSearchForm.is_staff">
                 <option value="">----</option>
                 <option value="1">Да</option>
@@ -256,19 +257,6 @@
               <select
                 class="form-select"
                 v-model="usersSearchForm.can_be_executor"
-              >
-                <option value="">----</option>
-                <option value="1">Да</option>
-                <option value="0">Нет</option>
-              </select>
-            </div>
-          </div>
-          <div class="col-3">
-            <div class="mb-3">
-              <label class="form-label">Суперпользователь</label>
-              <select
-                class="form-select"
-                v-model="usersSearchForm.is_superuser"
               >
                 <option value="">----</option>
                 <option value="1">Да</option>
@@ -325,7 +313,7 @@
             <th scope="col" class="text-center">Имя</th>
             <th scope="col" class="text-center">Номер телефона</th>
             <th scope="col" class="text-center">Активный</th>
-            <th scope="col" class="text-center">Суперпользователь</th>
+            <th scope="col" class="text-center">Статус персонала</th>
             <th scope="col" class="text-center">Дата создания записи</th>
             <th scope="col" class="text-center"></th>
           </tr>
@@ -346,8 +334,14 @@
             <td class="text-center">{{ user.last_name }}</td>
             <td class="text-center">{{ user.first_name }}</td>
             <td class="text-center">{{ user.phone_number }}</td>
-            <td class="text-center">{{ user.is_active }}</td>
-            <td class="text-center">{{ user.is_superuser }}</td>
+            <td class="text-center" v-if="user.is_active">
+              <font-awesome-icon icon="fa-solid fa-check" />
+            </td>
+            <td class="text-center" v-else></td>
+            <td class="text-center" v-if="user.is_staff">
+              <font-awesome-icon icon="fa-solid fa-check" />
+            </td>
+            <td class="text-center" v-else></td>
             <td class="text-center">
               {{ getFormattedDateComponent(user.date_joined) }} <br />
               {{ getFormattedTimeComponent(user.date_joined) }}
@@ -391,12 +385,12 @@
 import { mapGetters } from "vuex"
 import debounce from "lodash.debounce"
 import Spinner from "@/components/common/Spinner.vue"
+import TopNavView from "@/components/common/TopNavView.vue"
+import { authApi } from "@/api/auth/authAPI"
 import { usersAPI } from "@/api/admin/usersAPI"
 import { getFormattedDate, getFormattedTime } from "@/utils"
-import TopNavView from "@/components/common/TopNavView.vue"
 import useVuelidate from "@vuelidate/core"
 import { required, helpers, sameAs } from "@vuelidate/validators"
-import { authApi } from "@/api/auth/authAPI"
 
 export default {
   name: "AdminUsersView",

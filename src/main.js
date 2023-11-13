@@ -11,6 +11,9 @@ import { faMessage } from "@fortawesome/free-solid-svg-icons"
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons"
 import { faUserNurse } from "@fortawesome/free-solid-svg-icons"
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons"
+import { faCirclePlus } from "@fortawesome/free-solid-svg-icons"
+import { faCheck } from "@fortawesome/free-solid-svg-icons"
+import { faUsers } from "@fortawesome/free-solid-svg-icons"
 
 library.add(faCalendarDays)
 library.add(faClock)
@@ -18,6 +21,9 @@ library.add(faMessage)
 library.add(faTriangleExclamation)
 library.add(faUserNurse)
 library.add(faPaperPlane)
+library.add(faCirclePlus)
+library.add(faCheck)
+library.add(faUsers)
 
 createApp(App)
   .component("font-awesome-icon", FontAwesomeIcon)

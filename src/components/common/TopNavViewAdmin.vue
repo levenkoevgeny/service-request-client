@@ -2,7 +2,12 @@
   <div>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
-        <a class="navbar-brand" href="/" v-if="this.userData.avatar">
+        <a
+          class="navbar-brand"
+          href="/"
+          :title="this.userData.username"
+          v-if="this.userData.avatar"
+        >
           <img
             class="rounded-circle"
             :src="getAvatar(userData.avatar)"
@@ -11,7 +16,7 @@
             height="45"
           />
         </a>
-        <a class="navbar-brand" href="/" v-else>
+        <a class="navbar-brand" href="/" :title="this.userData.username" v-else>
           <div
             class="rounded-circle"
             style="
