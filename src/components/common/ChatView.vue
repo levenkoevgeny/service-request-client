@@ -110,6 +110,7 @@
             required
             autofocus
             placeholder="Введите сообщение ..."
+            :disabled="currentServiceRequest.get_request_status_block"
           />
         </div>
       </form>
