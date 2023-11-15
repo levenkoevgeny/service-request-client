@@ -102,6 +102,107 @@
 
   <!--add new user modal-->
 
+  <!--update user modal-->
+  <div
+    class="modal fade"
+    id="updateUserModal"
+    tabindex="-1"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true"
+    ref="userUpdate"
+  >
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <form @submit.prevent="updateUser">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">
+              Редактирование данных
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-12">
+                  <div class="mb-3">
+                    <label class="form-label">Фамилия</label>
+                    <input
+                      type="text"
+                      v-model="currentUserForUpdate.last_name"
+                      class="form-control"
+                    />
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="mb-3">
+                    <label class="form-label">Имя</label>
+                    <input
+                      type="text"
+                      v-model="currentUserForUpdate.first_name"
+                      class="form-control"
+                    />
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="mb-3">
+                    <label class="form-label">Телефон</label>
+                    <input
+                      type="text"
+                      v-model="currentUserForUpdate.phone_number"
+                      class="form-control"
+                    />
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="mb-3 form-check">
+                    <input
+                      type="checkbox"
+                      v-model="currentUserForUpdate.is_staff"
+                      class="form-check-input"
+                    />
+                    <label class="form-check-label" for="exampleCheck1"
+                      >Администратор</label
+                    >
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="mb-3 form-check">
+                    <input
+                      type="checkbox"
+                      v-model="currentUserForUpdate.is_active"
+                      class="form-check-input"
+                    />
+                    <label class="form-check-label" for="exampleCheck1"
+                      >Активный</label
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+              ref="updateUserModalCloseButton"
+            >
+              Закрыть
+            </button>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!--update user modal-->
+
   <!--update user password-->
   <div
     class="modal fade"
@@ -109,6 +210,7 @@
     tabindex="-1"
     aria-labelledby="exampleModalLabel"
     aria-hidden="true"
+    ref="userPassportUpdate"
   >
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
@@ -134,7 +236,7 @@
             {{ error.$message }}
           </p>
         </div>
-        <form @submit.prevent="updatePassword">
+        <form @submit.prevent="updateUserPassword">
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLabel">
               Форма смены пароля
@@ -319,7 +421,12 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(user, index) in sortedUsersList" :key="user.id">
+          <tr
+            v-for="(user, index) in sortedUsersList"
+            :key="user.id"
+            @click="showModalForUserUpdate(user.id)"
+            class="cursor-pointer"
+          >
             <td class="text-center" @click.stop>
               <input
                 type="checkbox"
@@ -346,13 +453,11 @@
               {{ getFormattedDateComponent(user.date_joined) }} <br />
               {{ getFormattedTimeComponent(user.date_joined) }}
             </td>
-            <td class="text-center">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-toggle="modal"
-                data-bs-target="#updateUserPasswordModal"
-              >
+            <td
+              class="text-center"
+              @click.stop="showModalForPasswordUpdate(user.id)"
+            >
+              <button type="button" class="btn btn-secondary">
                 Сменить пароль
               </button>
             </td>
@@ -402,7 +507,13 @@ export default {
       isError: false,
       newUserForm: { username: "", password: "", confirmPassword: "" },
       updateUserPasswordForm: { newPassword: "", confirmNewPassword: "" },
-      currentUserForUpdate: null,
+      currentUserForUpdate: {
+        last_name: "",
+        first_name: "",
+        phone_number: "",
+        is_active: "",
+        is_staff: "",
+      },
       usersSearchForm: {
         username: "",
         last_name: "",
@@ -444,7 +555,47 @@ export default {
           })
       }
     },
-    async updateUser(userId) {},
+    async showModalForUserUpdate(userId) {
+      try {
+        const response = await usersAPI.getItemData(this.userToken, userId)
+        this.currentUserForUpdate = await response.data
+        let updateModal = this.$refs.userUpdate
+        let myModal = new bootstrap.Modal(updateModal, {
+          keyboard: false,
+        })
+        myModal.show()
+      } catch (error) {
+        this.isError = true
+      } finally {
+      }
+    },
+    async showModalForPasswordUpdate(userId) {
+      try {
+        const response = await usersAPI.getItemData(this.userToken, userId)
+        this.currentUserForUpdate = await response.data
+        let updatePasswordModal = this.$refs.userPassportUpdate
+        let myModal = new bootstrap.Modal(updatePasswordModal, {
+          keyboard: false,
+        })
+        myModal.show()
+      } catch (error) {
+        this.isError = true
+      } finally {
+        this.isLoading = false
+      }
+    },
+    async updateUser() {
+      this.isLoading = true
+      try {
+        await usersAPI.updateItem(this.userToken, this.currentUserForUpdate)
+      } catch (error) {
+        this.isError = true
+      } finally {
+        this.isLoading = false
+        await this.loadData()
+        this.$refs.updateUserModalCloseButton.click()
+      }
+    },
     async deleteCheckedUsersHandler() {
       this.isLoading = true
       this.isError = false
@@ -467,7 +618,21 @@ export default {
           this.isLoading = false
         })
     },
-    async updatePassword(userId, newPassword) {},
+    async updateUserPassword() {
+      this.isLoading = true
+      try {
+        await usersAPI.updatePassword(
+          this.userToken,
+          this.currentUserForUpdate.id,
+          { password: this.updateUserPasswordForm.newPassword },
+        )
+      } catch (error) {
+        this.isError = true
+      } finally {
+        this.isLoading = false
+        this.$refs.updateUserPasswordModalCloseButton.click()
+      }
+    },
     debouncedSearch: debounce(async function () {
       await this.loadData()
     }, 100),

@@ -57,6 +57,15 @@ export const usersAPI = {
       authHeaders(token),
     )
   },
+
+  async updatePassword(token, userId, newPassword) {
+    return axios.post(
+      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/${base_url}/${userId}/set_password/`,
+      newPassword,
+      authHeaders(token),
+    )
+  },
+
   async getUnreadMessagesCount(token, userId) {
     return axios.get(
       `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/${base_url}/${userId}/get_unread_messages_count_in_requests/`,

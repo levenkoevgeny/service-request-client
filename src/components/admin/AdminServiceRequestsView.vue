@@ -429,7 +429,6 @@ export default {
         this.isLoading = false
       }
     },
-    async updateServiceRequest(userId) {},
     async deleteCheckedServicesRequestsHandler() {
       this.isLoading = true
       this.isError = false
