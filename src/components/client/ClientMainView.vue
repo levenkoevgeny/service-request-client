@@ -156,11 +156,11 @@
               {{ request.get_request_status_text }}
             </p>
             <p></p>
-            <p class="m-0 p-0" v-if="request.not_read_messages_count">
+            <p class="m-0 p-0" v-if="getUnreadMessagesCount(request.id) > 0">
               <font-awesome-icon icon="fa-solid fa-message" />&nbsp;&nbsp;Не
               прочитанных сообщений
               <span class="badge bg-secondary">{{
-                request.not_read_messages_count
+                getUnreadMessagesCount(request.id)
               }}</span>
             </p>
             <p class="m-0 p-0" v-else>
@@ -208,6 +208,7 @@ import { locationAPI } from "@/api/admin/locationAPI"
 import { serviceRequestAPI } from "@/api/client/serviceRequestAPI"
 import TopNavView from "@/components/common/TopNavView.vue"
 import { getFormattedDate, getFormattedTime } from "@/utils"
+import { usersAPI } from "@/api/admin/usersAPI"
 export default {
   name: "ClientMainView",
   components: { TopNavView, Spinner },
@@ -225,7 +226,9 @@ export default {
         address: "",
         request_description: "",
       },
+      unreadMessages: {},
       rws: null,
+      rws_unread: null,
       BACKEND_PROTOCOL: process.env.VUE_APP_BACKEND_PROTOCOL,
       BACKEND_HOST: process.env.VUE_APP_BACKEND_HOST,
       BACKEND_PORT: process.env.VUE_APP_BACKEND_PORT,
@@ -237,7 +240,12 @@ export default {
       `ws://${this.BACKEND_HOST}:${this.BACKEND_PORT}/ws/requests/${this.userData.id}/`,
     )
 
+    this.rws_unread = new ReconnectingWebSocket(
+      `ws://${this.BACKEND_HOST}:${this.BACKEND_PORT}/ws/unread/${this.userData.id}/`,
+    )
+
     this.rws.addEventListener("open", () => {})
+    this.rws_unread.addEventListener("open", () => {})
 
     this.rws.addEventListener("message", (e) => {
       const serviceRequestFromWebSocket = JSON.parse(e.data)
@@ -252,15 +260,20 @@ export default {
       )
       this.serviceRequestList.results = newServiceRequestList
     })
+
+    this.rws_unread.addEventListener("message", (e) => {
+      const newUnreadData = JSON.parse(e.data)
+      for (const [key, value] of Object.entries(newUnreadData)) {
+        this.unreadMessages[key] = value
+      }
+    })
   },
   mounted() {
     if (!this.userData.phone_number || !this.userData.last_name) {
       this.$refs.updateProfileModalShowButtonHidden.click()
     }
   },
-  unmounted() {
-    this.rws = null
-  },
+  async unmounted() {},
   methods: {
     async loadData() {
       try {
@@ -275,6 +288,12 @@ export default {
           },
         )
         this.serviceRequestList = await serviceResponse.data
+
+        const unreadResponse = await usersAPI.getUnreadMessagesCount(
+          this.userToken,
+          this.userData.id,
+        )
+        this.unreadMessages = await unreadResponse.data
       } catch (error) {
         this.isError = true
       } finally {
@@ -325,6 +344,9 @@ export default {
         params: { requestId: id },
       })
     },
+    getUnreadMessagesCount(serviceRequestId) {
+      return this.unreadMessages[serviceRequestId]
+    },
   },
   computed: {
     ...mapGetters({
@@ -338,7 +360,11 @@ export default {
       return this.locationList.results
     },
     orderedServices() {
-      return this.serviceRequestList.results
+      return this.serviceRequestList.results.sort((a, b) => {
+        return (
+          this.getUnreadMessagesCount(b.id) - this.getUnreadMessagesCount(a.id)
+        )
+      })
     },
   },
   watch: {},

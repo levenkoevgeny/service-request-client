@@ -259,7 +259,14 @@
                   v-model="request.checked_val"
                 />
               </td>
-              <td class="text-center">{{ index + 1 }}</td>
+              <td class="text-center">
+                {{ index + 1 }}
+                <span
+                  class="badge bg-secondary"
+                  v-if="getUnreadMessagesCount(request.id) > 0"
+                  >{{ getUnreadMessagesCount(request.id) }}</span
+                >
+              </td>
               <td class="text-center">{{ request.get_sender_name }}</td>
               <td class="text-start">{{ request.request_description }}</td>
               <td class="text-center">
@@ -326,6 +333,8 @@ import { usersAPI } from "@/api/admin/usersAPI"
 import { serviceRequestAPI } from "@/api/admin/serviceRequestAPI"
 import { statusAPI } from "@/api/admin/statusAPI"
 import { getFormattedDate, getFormattedTime } from "@/utils"
+import ReconnectingWebSocket from "reconnecting-websocket"
+
 export default {
   name: "AdminServiceRequestsView",
   data() {
@@ -358,6 +367,11 @@ export default {
         request_status: "",
         executor: "",
       },
+      rws_unread: null,
+      unreadMessages: {},
+      BACKEND_PROTOCOL: process.env.VUE_APP_BACKEND_PROTOCOL,
+      BACKEND_HOST: process.env.VUE_APP_BACKEND_HOST,
+      BACKEND_PORT: process.env.VUE_APP_BACKEND_PORT,
     }
   },
   methods: {
@@ -391,6 +405,12 @@ export default {
       } finally {
         this.isLoading = false
       }
+
+      const unreadResponse = await usersAPI.getUnreadMessagesCount(
+        this.userToken,
+        this.userData.id,
+      )
+      this.unreadMessages = await unreadResponse.data
     },
     async addNewServiceRequest() {
       this.isLoading = true
@@ -475,9 +495,27 @@ export default {
         )
       }
     },
+    getUnreadMessagesCount(serviceRequestId) {
+      return this.unreadMessages[serviceRequestId]
+    },
   },
   async created() {
     await this.loadData()
+    this.rws_unread = new ReconnectingWebSocket(
+      `ws://${this.BACKEND_HOST}:${this.BACKEND_PORT}/ws/unread/${this.userData.id}/`,
+    )
+
+    this.rws_unread.addEventListener("message", (e) => {
+      const newUnreadData = JSON.parse(e.data)
+      for (const [key, value] of Object.entries(newUnreadData)) {
+        this.unreadMessages[key] = value
+      }
+    })
+  },
+  async unmounted() {
+    if (this.rws_unread) {
+      this.rws_unread.close()
+    }
   },
   computed: {
     ...mapGetters({
@@ -485,7 +523,11 @@ export default {
       userToken: "auth/getToken",
     }),
     sortedServiceRequestsList() {
-      return this.serviceRequestsList.results
+      return this.serviceRequestsList.results.sort((a, b) => {
+        return (
+          this.getUnreadMessagesCount(b.id) - this.getUnreadMessagesCount(a.id)
+        )
+      })
     },
     sortedUsersList() {
       return this.usersList.results

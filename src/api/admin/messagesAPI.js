@@ -47,4 +47,12 @@ export const messagesAPI = {
       authHeaders(token),
     )
   },
+
+  async sendMessageIsReadByUser(token, newRecord) {
+    return axios.post(
+      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/message-readings/`,
+      newRecord,
+      authHeaders(token),
+    )
+  },
 }

@@ -97,7 +97,10 @@
       </div>
     </div>
 
-    <div class="mb-3" style="position: absolute; bottom: 0px; width: calc(100% - 48px)">
+    <div
+      class="mb-3"
+      style="position: absolute; bottom: 0px; width: calc(100% - 48px)"
+    >
       <form @submit.prevent="sendMessage">
         <div class="input-group">
           <button
@@ -148,11 +151,19 @@ export default {
   methods: {
     async sendMessage() {
       try {
-        await messagesAPI.addItem(this.userToken, {
+        const response = await messagesAPI.addItem(this.userToken, {
           message_text: this.typingMessage,
           sender: this.userData.id,
           service_request: this.currentServiceRequest.id,
         })
+
+        if (response.status === 201) {
+          const newMessage = await response.data
+          await messagesAPI.sendMessageIsReadByUser(this.userToken, {
+            message: newMessage.id,
+            who_read: this.userData.id,
+          })
+        }
       } catch (error) {
       } finally {
         this.typingMessage = ""

@@ -50,4 +50,10 @@ export const serviceRequestAPI = {
       authHeaders(token),
     )
   },
+  async getUnreadMessages(token, serviceRequestId) {
+    return axios.get(
+      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/${base_url}/${serviceRequestId}/get_unread_messages_count/`,
+      authHeaders(token),
+    )
+  },
 }

@@ -160,6 +160,7 @@ export default {
       BACKEND_PROTOCOL: process.env.VUE_APP_BACKEND_PROTOCOL,
       BACKEND_HOST: process.env.VUE_APP_BACKEND_HOST,
       BACKEND_PORT: process.env.VUE_APP_BACKEND_PORT,
+      unreadMessages: [],
     }
   },
   async created() {
@@ -186,22 +187,19 @@ export default {
 
       if (!thereIsMessage) {
         this.chatMessages.results.push(messageFromWebSocket)
-        if (messageFromWebSocket.sender_data.id !== this.userData.id) {
-          await messagesAPI.updateItem(this.userToken, {
-            ...messageFromWebSocket,
-            is_read: true,
-          })
-        }
       } else {
         this.chatMessages.results = newChatMessages
+      }
+      if (messageFromWebSocket.sender_data.id !== this.userData.id) {
+        await messagesAPI.sendMessageIsReadByUser(this.userToken, {
+          message: messageFromWebSocket.id,
+          who_read: this.userData.id,
+        })
       }
     })
   },
   mounted() {},
-  unmounted() {
-    this.rws_serviceRequest = null
-    this.rws_messages = null
-  },
+  async unmounted() {},
   methods: {
     async loadData(requestId) {
       try {
@@ -235,6 +233,18 @@ export default {
 
         const responseStatuses = await statusAPI.getItemsList(this.userToken)
         this.statusesList = await responseStatuses.data
+
+        const unreadResponse = await serviceRequestAPI.getUnreadMessages(
+          this.userToken,
+          this.currentServiceRequest.id,
+        )
+        this.unreadMessages = await unreadResponse.data
+        this.unreadMessages.map(async (message) => {
+          await messagesAPI.sendMessageIsReadByUser(this.userToken, {
+            message: message.id,
+            who_read: this.userData.id,
+          })
+        })
       } catch (error) {
         this.isError = true
       } finally {
