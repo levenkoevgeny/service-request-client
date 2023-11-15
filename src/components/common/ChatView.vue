@@ -1,88 +1,94 @@
 <template>
   <div
     style="background-color: #ffffff"
-    class="p-4 chat-body"
+    class="p-4 chat-body chat-container"
     :style="{
       borderTopColor: currentServiceRequest.get_request_status_color,
     }"
   >
     <h5 class="mb-4 fs-4">Обсуждение заявки</h5>
-    <div v-for="message in messagesList" :key="message.id">
-      <div class="message-container mb-3 mx-2">
-        <div v-if="isMessageMine(message)">
-          <div class="d-flex flex-row justify-content-start align-items-start">
-            <div class="d-flex flex-row align-items-center">
-              <div class="me-4">
-                <img
-                  v-if="message.sender_data.avatar"
-                  :src="getAvatar(message.sender_data.avatar)"
-                  alt="No picture"
-                  class="rounded-circle"
-                  width="70"
-                  height="70"
-                />
-                <div
-                  v-else
-                  class="rounded-circle d-flex justify-content-center align-items-center default-avatar"
-                >
-                  <p class="m-0 p-0 fs-3" style="color: #dee2e6">
-                    {{ getDefaultAvatarText() }}
+    <div style="max-height: 70%; height: 70%; overflow: auto">
+      <div v-for="message in messagesList" :key="message.id">
+        <div class="message-container mb-3 mx-2">
+          <div v-if="isMessageMine(message)">
+            <div
+              class="d-flex flex-row justify-content-start align-items-start"
+            >
+              <div class="d-flex flex-row align-items-center">
+                <div class="me-4">
+                  <img
+                    v-if="message.sender_data.avatar"
+                    :src="getAvatar(message.sender_data.avatar)"
+                    alt="No picture"
+                    class="rounded-circle"
+                    width="70"
+                    height="70"
+                  />
+                  <div
+                    v-else
+                    class="rounded-circle d-flex justify-content-center align-items-center default-avatar"
+                  >
+                    <p class="m-0 p-0 fs-3" style="color: #dee2e6">
+                      {{ getDefaultAvatarText() }}
+                    </p>
+                  </div>
+                </div>
+
+                <div class="d-flex flex-column" style="width: 80%">
+                  <small class="fst-italic py-1">
+                    {{
+                      getFormattedDateComponent(message.date_time_created)
+                    }}&nbsp;
+                    {{ getFormattedTimeComponent(message.date_time_created) }}
+                  </small>
+                  <p
+                    class="message-text p-3 rounded-2"
+                    style="background-color: #e8f1f3"
+                  >
+                    {{ message.message_text }}
                   </p>
                 </div>
               </div>
-
-              <div class="d-flex flex-column" style="width: 80%">
-                <small class="fst-italic py-1">
-                  {{
-                    getFormattedDateComponent(message.date_time_created)
-                  }}&nbsp;
-                  {{ getFormattedTimeComponent(message.date_time_created) }}
-                </small>
-                <p
-                  class="message-text p-3 rounded-2"
-                  style="background-color: #e8f1f3"
-                >
-                  {{ message.message_text }}
-                </p>
-              </div>
             </div>
           </div>
-        </div>
-        <div v-else>
-          <div class="d-flex flex-row justify-content-end align-items-start">
-            <div class="d-flex flex-row align-items-center justify-content-end">
-              <div class="d-flex flex-column" style="width: 80%">
-                <small class="fst-italic py-1 ms-auto">
-                  {{
-                    getFormattedDateComponent(message.date_time_created)
-                  }}&nbsp;
-                  {{ getFormattedTimeComponent(message.date_time_created) }}
-                </small>
-                <p
-                  class="message-text p-3 rounded-2"
-                  style="background-color: #efefef"
-                >
-                  {{ message.message_text }}
-                </p>
-              </div>
-              <div class="ms-4">
-                <img
-                  v-if="message.sender_data.avatar"
-                  :src="getAvatar(message.sender_data.avatar)"
-                  alt="No picture"
-                  class="rounded-circle"
-                  width="70"
-                  height="70"
-                />
-
-                <div
-                  v-else
-                  class="rounded-circle d-flex justify-content-center align-items-center"
-                  style="width: 70px; height: 70px; background-color: #c4bdbd"
-                >
-                  <p class="m-0 p-0 fs-3" style="color: #dee2e6">
-                    {{ getDefaultAvatarText() }}
+          <div v-else>
+            <div class="d-flex flex-row justify-content-end align-items-start">
+              <div
+                class="d-flex flex-row align-items-center justify-content-end"
+              >
+                <div class="d-flex flex-column" style="width: 80%">
+                  <small class="fst-italic py-1 ms-auto">
+                    {{
+                      getFormattedDateComponent(message.date_time_created)
+                    }}&nbsp;
+                    {{ getFormattedTimeComponent(message.date_time_created) }}
+                  </small>
+                  <p
+                    class="message-text p-3 rounded-2"
+                    style="background-color: #efefef"
+                  >
+                    {{ message.message_text }}
                   </p>
+                </div>
+                <div class="ms-4">
+                  <img
+                    v-if="message.sender_data.avatar"
+                    :src="getAvatar(message.sender_data.avatar)"
+                    alt="No picture"
+                    class="rounded-circle"
+                    width="70"
+                    height="70"
+                  />
+
+                  <div
+                    v-else
+                    class="rounded-circle d-flex justify-content-center align-items-center"
+                    style="width: 70px; height: 70px; background-color: #c4bdbd"
+                  >
+                    <p class="m-0 p-0 fs-3" style="color: #dee2e6">
+                      {{ getDefaultAvatarText() }}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -90,7 +96,8 @@
         </div>
       </div>
     </div>
-    <div class="mb-3 mx-2">
+
+    <div class="mb-3" style="position: absolute; bottom: 0px; width: calc(100% - 48px)">
       <form @submit.prevent="sendMessage">
         <div class="input-group">
           <button
@@ -173,3 +180,10 @@ export default {
   },
 }
 </script>
+<style>
+.chat-container {
+  height: 55vh;
+  max-height: 55vh;
+  position: relative;
+}
+</style>
