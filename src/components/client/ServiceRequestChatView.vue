@@ -1,6 +1,9 @@
 <template>
   <TopNavView />
   <div class="container">
+    <div v-if="isError" class="alert alert-danger m-0 p-3" role="alert">
+      Ошибка приложения
+    </div>
     <div class="mt-5">
       <p class="fs-4">
         <font-awesome-icon icon="fa-solid fa-calendar-days" />&nbsp;&nbsp;

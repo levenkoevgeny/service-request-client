@@ -125,6 +125,9 @@
     </div>
 
     <div v-else>
+      <div v-if="isError" class="alert alert-danger m-0 p-3" role="alert">
+        Ошибка приложения
+      </div>
       <div class="my-3"></div>
       <div v-if="!orderedServices.length" class="my-5">
         <h3>У Вас еще пока нет сделанных заявок</h3>

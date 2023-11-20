@@ -1,6 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router"
 
-import NotFoundView from "@/components/common/NotFoundView"
+import {
+  NotFoundView,
+  NetworkErrorView,
+  ServerErrorView,
+} from "@/components/errors"
 import { ClientMainView, ServiceRequestChatView } from "@/components/client"
 import {
   AdminMainView,
@@ -63,6 +67,18 @@ const routes = [
         component: AdminUsersView,
       },
     ],
+  },
+  {
+    path: "/network-error",
+    name: "network-error",
+    component: NetworkErrorView,
+    meta: { requiresAuth: false },
+  },
+  {
+    path: "/server-error",
+    name: "server-error",
+    component: ServerErrorView,
+    meta: { requiresAuth: false },
   },
 ]
 

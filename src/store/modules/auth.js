@@ -1,6 +1,5 @@
 import { authApi } from "@/api/auth/authAPI"
 import { getLocalToken, saveLocalToken, removeLocalToken } from "@/utils"
-import router from "@/router"
 
 const state = () => ({
   token: null,
@@ -48,7 +47,9 @@ const actions = {
         commit("setUserData", { ...userData })
       }
     } catch (error) {
-      commit("setIsLogInError", true)
+      if (error.code !== "ERR_NETWORK") {
+        commit("setIsLogInError", true)
+      }
     }
   },
 
