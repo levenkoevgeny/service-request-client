@@ -101,7 +101,6 @@
   </button>
   <div class="container">
     <div class="d-flex align-items-center my-3">
-      <h5><font-awesome-icon icon="fa-solid fa-list" />&nbsp;&nbsp;</h5>
       <h3>Ваши заявки</h3>
     </div>
     <div class="d-flex justify-content-start ms-0 ps-0">
@@ -172,32 +171,35 @@
             </p>
           </div>
         </div>
+
+        <div class="my-3"></div>
+        <nav>
+          <ul class="pagination pagination-md">
+            <li
+              class="page-item"
+              :class="{ disabled: !serviceRequestList.previous }"
+
+            >
+              <button
+                class="page-link"
+                @click="updatePaginator(serviceRequestList.previous)"
+              >
+                <span aria-hidden="true">&laquo;</span>
+              </button>
+            </li>
+            <li class="mx-2"></li>
+            <li class="page-item" :class="{ disabled: !serviceRequestList.next }">
+              <button
+                class="page-link"
+                @click="updatePaginator(serviceRequestList.next)"
+              >
+                <span aria-hidden="true">&raquo;</span>
+              </button>
+            </li>
+          </ul>
+        </nav>
       </div>
-      <div class="my-3"></div>
-      <nav>
-        <ul class="pagination pagination-md">
-          <li
-            class="page-item"
-            :class="{ disabled: !serviceRequestList.previous }"
-          >
-            <button
-              class="page-link"
-              @click="updatePaginator(serviceRequestList.previous)"
-            >
-              <span aria-hidden="true">&laquo;</span>
-            </button>
-          </li>
-          <li class="mx-2"></li>
-          <li class="page-item" :class="{ disabled: !serviceRequestList.next }">
-            <button
-              class="page-link"
-              @click="updatePaginator(serviceRequestList.next)"
-            >
-              <span aria-hidden="true">&raquo;</span>
-            </button>
-          </li>
-        </ul>
-      </nav>
+
     </div>
   </div>
 </template>

@@ -11,9 +11,7 @@
       <div v-for="message in messagesList" :key="message.id">
         <div class="message-container mb-3 mx-2">
           <div v-if="isMessageMine(message)">
-            <div
-              class="d-flex flex-row justify-content-start align-items-start"
-            >
+            <div class="d-flex flex-row justify-content-end align-items-start">
               <div class="d-flex flex-row align-items-center">
                 <div class="me-4">
                   <img
@@ -29,7 +27,7 @@
                     class="rounded-circle d-flex justify-content-center align-items-center default-avatar"
                   >
                     <p class="m-0 p-0 fs-3" style="color: #dee2e6">
-                      {{ getDefaultAvatarText() }}
+                      {{ getDefaultAvatarText(message.sender_data.username) }}
                     </p>
                   </div>
                 </div>
@@ -52,7 +50,9 @@
             </div>
           </div>
           <div v-else>
-            <div class="d-flex flex-row justify-content-end align-items-start">
+            <div
+              class="d-flex flex-row justify-content-start align-items-start"
+            >
               <div
                 class="d-flex flex-row align-items-center justify-content-end"
               >
@@ -86,7 +86,7 @@
                     style="width: 70px; height: 70px; background-color: #c4bdbd"
                   >
                     <p class="m-0 p-0 fs-3" style="color: #dee2e6">
-                      {{ getDefaultAvatarText() }}
+                      {{ getDefaultAvatarText(message.sender_data.username) }}
                     </p>
                   </div>
                 </div>
@@ -185,8 +185,8 @@ export default {
       const trimmedURI = uri.slice(uri.indexOf("/media"))
       return `${this.BACKEND_PROTOCOL}://${this.BACKEND_HOST}:${this.BACKEND_PORT}${trimmedURI}`
     },
-    getDefaultAvatarText() {
-      return this.userData.username[0].toUpperCase()
+    getDefaultAvatarText(username) {
+      return username[0].toUpperCase()
     },
   },
 }

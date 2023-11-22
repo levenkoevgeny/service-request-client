@@ -87,29 +87,7 @@
       style="background-color: #ffffff !important"
     >
       <div class="container-fluid">
-        <a
-          class="navbar-brand"
-          :title="this.userData.username"
-          href="/"
-          v-if="this.userData.avatar"
-        >
-          <img
-            class="rounded-circle ms-5"
-            :src="getAvatar(userData.avatar)"
-            alt=""
-            width="70"
-            height="70"
-          />
-        </a>
-        <a class="navbar-brand" :title="this.userData.username" href="/" v-else>
-          <div
-            class="rounded-circle d-flex justify-content-center align-items-center default-avatar"
-          >
-            <p class="m-0 p-0 fs-3">
-              {{ getDefaultAvatarText() }}
-            </p>
-          </div>
-        </a>
+        <AvatarView :user-data="userData" />
 
         <button
           class="navbar-toggler"
@@ -130,7 +108,8 @@
             <li class="nav-item">
               <button
                 type="button"
-                class="btn btn-link nav-link fs-5"
+                class="nav-link fs-5"
+                style="background: none !important; border: none"
                 data-bs-toggle="modal"
                 data-bs-target="#personalDataModal"
                 ref="updateProfileModalShowButton"
@@ -152,16 +131,10 @@
 
 <script>
 import { mapGetters, mapState } from "vuex"
-
+import AvatarView from "@/components/common/AvatarView.vue"
 export default {
   name: "TopNavView",
-  data() {
-    return {
-      BACKEND_PROTOCOL: process.env.VUE_APP_BACKEND_PROTOCOL,
-      BACKEND_HOST: process.env.VUE_APP_BACKEND_HOST,
-      BACKEND_PORT: process.env.VUE_APP_BACKEND_PORT,
-    }
-  },
+  components: { AvatarView },
   computed: {
     ...mapGetters({
       userData: "auth/getUser",
@@ -185,9 +158,6 @@ export default {
         this.$refs.updateProfileModalCloseButton.click()
         this.$router.replace({ name: "client-main" })
       })
-    },
-    getAvatar(uri) {
-      return `${this.BACKEND_PROTOCOL}://${this.BACKEND_HOST}:${this.BACKEND_PORT}${uri}`
     },
     logOut() {
       this.$store.dispatch("auth/actionRemoveLogIn")

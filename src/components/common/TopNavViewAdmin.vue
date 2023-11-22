@@ -2,36 +2,7 @@
   <div>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
-        <a
-          class="navbar-brand"
-          href="/"
-          :title="this.userData.username"
-          v-if="this.userData.avatar"
-        >
-          <img
-            class="rounded-circle"
-            :src="getAvatar(userData.avatar)"
-            alt=""
-            width="45"
-            height="45"
-          />
-        </a>
-        <a class="navbar-brand" href="/" :title="this.userData.username" v-else>
-          <div
-            class="rounded-circle"
-            style="
-              width: 45px;
-              height: 45px;
-              background-color: #f1aeb5;
-              color: #fff3cd;
-              display: flex;
-              align-content: end;
-              justify-content: center;
-            "
-          >
-            <h3>{{ getUserAvatarName() }}</h3>
-          </div>
-        </a>
+        <AvatarView :user-data="userData" />
 
         <button
           class="navbar-toggler"
@@ -66,31 +37,19 @@
 
 <script>
 import { mapGetters } from "vuex"
-
+import AvatarView from "@/components/common/AvatarView.vue"
 export default {
   name: "TopNavViewAdmin",
-  data() {
-    return {
-      BACKEND_PROTOCOL: process.env.VUE_APP_BACKEND_PROTOCOL,
-      BACKEND_HOST: process.env.VUE_APP_BACKEND_HOST,
-      BACKEND_PORT: process.env.VUE_APP_BACKEND_PORT,
-    }
-  },
+  components: { AvatarView },
   computed: {
     ...mapGetters({
       userData: "auth/getUser",
     }),
   },
   methods: {
-    getAvatar(uri) {
-      return `${this.BACKEND_PROTOCOL}://${this.BACKEND_HOST}:${this.BACKEND_PORT}${uri}`
-    },
     logOut() {
       this.$store.dispatch("auth/actionRemoveLogIn")
       this.$router.push({ name: "login", replace: true })
-    },
-    getUserAvatarName() {
-      return this.userData.username[0].toUpperCase()
     },
   },
 }

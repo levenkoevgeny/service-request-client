@@ -490,7 +490,6 @@
 import { mapGetters } from "vuex"
 import debounce from "lodash.debounce"
 import Spinner from "@/components/common/Spinner.vue"
-import TopNavView from "@/components/common/TopNavView.vue"
 import { authApi } from "@/api/auth/authAPI"
 import { usersAPI } from "@/api/admin/usersAPI"
 import { getFormattedDate, getFormattedTime } from "@/utils"
@@ -499,7 +498,7 @@ import { required, helpers, sameAs } from "@vuelidate/validators"
 
 export default {
   name: "AdminUsersView",
-  components: { TopNavView, Spinner },
+  components: { Spinner },
   data() {
     return {
       usersList: { results: [] },
@@ -539,7 +538,7 @@ export default {
       }
     },
     async addNewUser() {
-      if (!this.v$.$invalid) {
+      if (!this.v$.newUserForm.$invalid) {
         this.isError = false
         this.isLoading = true
         this.$store
@@ -551,6 +550,7 @@ export default {
               password: "",
               confirmPassword: "",
             }
+            this.loadData()
             this.isLoading = false
           })
       }
